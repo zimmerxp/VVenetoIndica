@@ -672,12 +672,12 @@
 // ─── DATA ──────────────────────────────────────────────────────────────────
 const services = [
   // Alimentação
-  { id:1,  cat:'Alimentação', name:'Frango Assado Jardim da Glória', desc:'Frango assado no espeto, ótimo para almoços e jantares. Entrega no condomínio.', phones:['+55015319894790','+553186902816'], morador:false, emoji:'🍗' },
+  { id:1,  cat:'Alimentação', name:'Frango Assado Jardim da Glória', desc:'Frango assado no espeto, ótimo para almoços e jantares. Entrega no condomínio.', phones:['+553186902816'], morador:false, emoji:'🍗' },
   { id:2,  cat:'Alimentação', name:'Garage Burguer', desc:'Hamburgueria artesanal com opções variadas. Delivery disponível.', phones:['+553185876457'], morador:false, emoji:'🍔' },
   { id:3,  cat:'Alimentação', name:'Hamburguer', desc:'Lanches e hambúrgueres sob encomenda.', phones:['+5531996051289'], morador:true, emoji:'🍔' },
-  { id:4,  cat:'Alimentação', name:'Marmitex', desc:'Marmitas caseiras diárias, almoço e jantar.', phones:['+553171802046'], morador:true, emoji:'🍱' },
+  //{ id:4,  cat:'Alimentação', name:'Marmitex', desc:'Marmitas caseiras diárias, almoço e jantar.', phones:['+553171802046'], morador:true, emoji:'🍱' },
   { id:5,  cat:'Alimentação', name:'Top Cheff Pizzaria e Hamburgueria', desc:'Pizzas e hambúrgueres artesanais. Pedidos pelo WhatsApp.', phones:['+553171451323'], morador:false, emoji:'🍕' },
-  { id:6,  cat:'Alimentação', name:'Yume Lanches', desc:'Lanches variados com sabor japonês. Delivery e retirada.', phones:['+553182420890'], morador:false, emoji:'🍜' },
+  { id:6,  cat:'Alimentação', name:'Yume Lanches', desc:'Comida Japonesa. Delivery e retirada.', phones:['+553182420890'], morador:false, emoji:'🍜' },
 
   // Beleza
   { id:7,  cat:'Beleza e Bem-estar', name:'Cristina — Unhas e Crochê', desc:'Manicure, pedicure e artesanato em crochê sob encomenda.', phones:['+553186179157'], morador:true, emoji:'💅' },
@@ -703,7 +703,7 @@ const services = [
   { id:25, cat:'Manutenção e Reformas', name:'Paulo — Interfone', desc:'Instalação e manutenção de interfones e porteiros eletrônicos.', phones:['+5531988045232'], morador:false, emoji:'📞' },
   { id:26, cat:'Manutenção e Reformas', name:'Paulo Santos — Montador', desc:'Montagem de móveis planejados e sob medida.', phones:['+553182646613'], morador:false, emoji:'🪑' },
   { id:27, cat:'Manutenção e Reformas', name:'Sabiá Pedreiro', desc:'Serviços de alvenaria, reformas e pequenos reparos.', phones:['+5531996920243'], morador:false, emoji:'🏗️' },
-  { id:28, cat:'Manutenção e Reformas', name:'Toninho Eletric', desc:'Eletricista experiente, serviços residenciais e prediais.', phones:['+553197390446'], morador:false, emoji:'⚡' },
+  //{ id:28, cat:'Manutenção e Reformas', name:'Toninho Eletric', desc:'Eletricista experiente, serviços residenciais e prediais.', phones:['+553197390446'], morador:false, emoji:'⚡' },
   { id:29, cat:'Manutenção e Reformas', name:'Toninho Eletricista', desc:'Instalações elétricas, quadros e iluminação.', phones:['+5531992134261','+5531997390446'], morador:false, emoji:'⚡' },
   { id:30, cat:'Manutenção e Reformas', name:'Telhados — Madeireira Serralheria', desc:'Telhados, estruturas metálicas e trabalhos em madeira.', phones:['+5531997287811'], morador:false, emoji:'🏠' },
   { id:31, cat:'Manutenção e Reformas', name:'Vagner Mecânico', desc:'Mecânica geral de carros e motos.', phones:['+5531991945595'], morador:false, emoji:'🔩' },
@@ -717,16 +717,16 @@ const services = [
   { id:36, cat:'Outros Serviços', name:'FRB Controle de Pragas — Fábio', desc:'Dedetização, descupinização e controle de pragas em geral.', phones:['+553196625856'], morador:false, emoji:'🦟' },
   { id:37, cat:'Outros Serviços', name:'Fabiara Festas', desc:'Organização e decoração de festas e eventos.', phones:['+553186622340'], morador:false, emoji:'🎊' },
   { id:38, cat:'Outros Serviços', name:'Luciara Sá — GPS', desc:'Serviços de navegação GPS e assessoria logística.', phones:['+553191102376'], morador:true, emoji:'📍' },
-  { id:39, cat:'Outros Serviços', name:'Maria Costureira Baependi', desc:'Costura artesanal, ajustes e reformas de roupas.', phones:['+553199411556'], morador:false, emoji:'🧵' },
+  { id:39, cat:'Outros Serviços', name:'Maria Costureira Baependi', desc:'Costura, ajustes e reformas de roupas. NA esquina da Baependi com Bambui.', phones:['+553199411556'], morador:false, emoji:'🧵' },
   { id:40, cat:'Outros Serviços', name:'Rodrigo — Aluguel Mesas e Cadeiras', desc:'Aluguel de mobiliário para eventos e festas.', phones:['+553196762554'], morador:false, emoji:'🎉' },
   { id:41, cat:'Outros Serviços', name:'Simone Costureira Silva', desc:'Costureira com experiência em roupas sob medida e bordados.', phones:['+5531995337353'], morador:false, emoji:'🧵' },
   { id:42, cat:'Outros Serviços', name:'Valdir — Mesas e Cadeiras', desc:'Locação de mesas e cadeiras para eventos.', phones:['+553199754079'], morador:false, emoji:'🎉' },
-  { id:63, cat:'Outros Serviços', name:'PersonlizAlí', desc:'Serviços de Impressão, Copias e Muito mais.', phones:['+5531982564070'], morador:false, emoji:'🖨️📄' },
+  { id:63, cat:'Outros Serviços', name:'PersonlizAlí', desc:'Serviços de Impressão, Copias e Muito mais.', phones:['+5531982564070'], morador:false, emoji:'🖨️' },
 
   // Saúde
   { id:43, cat:'Saúde e Farmácia', name:'Farmácia Maxi', desc:'Farmácia completa com medicamentos, cosméticos e manipulação.', phones:['+553196982254'], morador:false, emoji:'💊' },
   { id:44, cat:'Saúde e Farmácia', name:'Farmácia Drogaria São Félix', desc:'Medicamentos e produtos de saúde com atendimento rápido.', phones:['+553136215800'], morador:false, emoji:'🏥' },
-  { id:45, cat:'Saúde e Farmácia', name:'Gerais Farma', desc:'Rede de farmácias com preços acessíveis e entrega.', phones:['+553175150038'], morador:false, emoji:'💊' },
+  //{ id:45, cat:'Saúde e Farmácia', name:'Gerais Farma', desc:'Rede de farmácias com preços acessíveis e entrega.', phones:['+553175150038'], morador:false, emoji:'💊' },
   { id:46, cat:'Saúde e Farmácia', name:'Gerais Farmácia Vespasiano', desc:'Farmácia local em Vespasiano. Medicamentos e dermocosméticos.', phones:['+553175150038'], morador:false, emoji:'🏥' },
   { id:47, cat:'Saúde e Farmácia', name:'Rubi Farma', desc:'Farmácia com delivery e atendimento especializado.', phones:['+553182811069'], morador:false, emoji:'💊' },
   { id:48, cat:'Saúde e Farmácia', name:'Hiperfarma Santa Clara', desc:'Grandes farmácias com variedade de produtos e bons preços.', phones:['+553191142827'], morador:false, emoji:'🏥' },
@@ -735,9 +735,9 @@ const services = [
   { id:49, cat:'Serviços Profissionais', name:'Contabilidade — Claudia Silva', desc:'Serviços contábeis, declaração de IR e consultoria fiscal.', phones:['+553187241861'], morador:false, emoji:'📊' },
   { id:50, cat:'Serviços Profissionais', name:'Daisymar — DGCO Compras', desc:'Assessoria em compras, cotações e procurement.', phones:['+553199952973'], morador:true, emoji:'🛒' },
   { id:51, cat:'Serviços Profissionais', name:'Despachante Valdemar', desc:'Despachante para documentação de veículos e DETRAN.', phones:['+553199881538'], morador:false, emoji:'📋' },
-  { id:52, cat:'Serviços Profissionais', name:'Márcio — Sub Síndico CITA', desc:'Sub síndico do condomínio. Contato para assuntos internos.', phones:['+553188105781'], morador:true, emoji:'🏢' },
+ // { id:52, cat:'Serviços Profissionais', name:'Márcio — Sub Síndico CITA', desc:'Sub síndico do condomínio. Contato para assuntos internos.', phones:['+553188105781'], morador:true, emoji:'🏢' },
   { id:53, cat:'Serviços Profissionais', name:'Renata Gomes — Advogada', desc:'Consultoria jurídica: direito civil, trabalhista e imobiliário.', phones:['+5531999953364'], morador:false, emoji:'⚖️' },
-  { id:54, cat:'Serviços Profissionais', name:'Síndico Profissional', desc:'Gestão condominial profissional. Administração e zeladoria.', phones:['+553171512837'], morador:false, emoji:'🏢' },
+ // { id:54, cat:'Serviços Profissionais', name:'Síndico Profissional', desc:'Gestão condominial profissional. Administração e zeladoria.', phones:['+553171512837'], morador:false, emoji:'🏢' },
 
   // Transporte
   { id:55, cat:'Transporte e Logística', name:'Andreia — Van Escolar', desc:'Van escolar para transporte de crianças até a escola.', phones:['+553185782731'], morador:false, emoji:'🚌' },
