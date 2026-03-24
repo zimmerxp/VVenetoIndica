@@ -299,6 +299,22 @@
     .vote-btn.used:hover, .vote-btn.used.active { background: #fff4e0; border-color: var(--gold); color: #8a6010; }
     .vote-btn .emoji { font-size: 1em; }
 
+    /* ── BOTÃO COMPARTILHAR ── */
+    .share-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+    .share-btn:hover { background: #e8f0fb; border-color: #2a5bad; color: #2a5bad; }
+    .share-btn.copied { background: var(--green-pale); border-color: var(--green); color: var(--green); }
+
     /* ── FILTRO MORADORES ── */
     .filter-toggle {
       display: flex; align-items: center; gap: 8px;
@@ -666,7 +682,7 @@
   <div class="footer-logo">🏡 Veneto Indica</div>
   <div>Catálogo comunitário de serviços — mantido pelos moradores do Villa Veneto</div>
   <div class="footer-divider"></div>
-  <div>Última atualização: <span id="lastUpdate">março de 2025</span> &nbsp;·&nbsp; <span id="footerCount">61</span> prestadores cadastrados</div>
+  <div>👁️ <strong id="visitCount">—</strong> visitas &nbsp;·&nbsp; Última atualização: <span id="lastUpdate">—</span> &nbsp;·&nbsp; <span id="footerCount">—</span> prestadores</div>
   <div style="margin-top:6px;">Desenvolvido por <a href="https://ztech.website/" target="_blank" rel="noopener">ztech.website</a></div>
 </footer>
 
@@ -886,7 +902,7 @@ function renderCards() {
           <br><small style="color:#aaa9a0;margin-top:4px;display:block">📞 ${phoneDisplay}</small>
         </div>
         <div class="card-divider"></div>
-        <div style="padding:10px 16px 0;display:flex;gap:6px;flex-wrap:wrap;">
+        <div style="padding:10px 16px 0;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
           <button class="vote-btn up ${myVote==='up'?'active':''}" onclick="vote(${s.id},'up')">
             <span class="emoji">👍</span> <span id="up-${s.id}">${upCount}</span>
           </button>
@@ -895,6 +911,9 @@ function renderCards() {
           </button>
           <button class="vote-btn used ${myUsed?'active':''}" onclick="toggleUsed(${s.id})" title="Marcar que você já usou este serviço">
             <span class="emoji">✅</span> Já usei <span id="used-${s.id}">${usedCount > 0 ? usedCount : ''}</span>
+          </button>
+          <button class="share-btn" id="share-${s.id}" onclick="compartilhar(${s.id})" title="Compartilhar contato">
+            📤 Compartilhar
           </button>
         </div>
         <div class="card-footer">
@@ -947,6 +966,63 @@ function toggleUsed(id) {
   myVotes[`used_${id}`] = !wasUsed;
   saveMyVotes();
 }
+
+// ─── COMPARTILHAR CONTATO ──────────────────────────────────────────────────
+function compartilhar(id) {
+  const s = services.find(x => x.id === id);
+  if (!s) return;
+  const phone = s.phones[0].replace(/\D/g,'');
+  const phoneDisplay = s.phones.map(formatPhone).join(' / ');
+  const upCount = getCount(id, 'up');
+  const usedCount = getCount(id, 'used');
+
+  const texto = [
+    `🏡 *Veneto Indica — ${s.name}*`,
+    ``,
+    `📂 ${s.cat}`,
+    `📞 ${phoneDisplay}`,
+    ``,
+    s.desc,
+    ``,
+    upCount  > 0 ? `👍 ${upCount} curtida${upCount  > 1 ? 's' : ''}` : '',
+    usedCount > 0 ? `✅ ${usedCount} morador${usedCount > 1 ? 'es' : ''} já usou` : '',
+    ``,
+    `🔗 Veja mais serviços: ${window.location.href}`,
+  ].filter(l => l !== undefined && !(l === '' && texto && texto[texto.length-1] === '')).join('\n');
+
+  // Tenta usar a API nativa de compartilhamento (celular)
+  if (navigator.share) {
+    navigator.share({
+      title: `Veneto Indica — ${s.name}`,
+      text: texto,
+    }).catch(() => {});
+  } else {
+    // Fallback: abre WhatsApp direto no desktop
+    const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+    window.open(url, '_blank');
+  }
+
+  // Feedback visual no botão
+  const btn = document.getElementById(`share-${id}`);
+  if (btn) {
+    btn.textContent = '✅ Enviado!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📤 Compartilhar';
+      btn.classList.remove('copied');
+    }, 2000);
+  }
+}
+
+// ─── CONTADOR DE VISITAS (Firebase) ────────────────────────────────────────
+const visitsRef = ref(db, 'visits/total');
+// incrementa +1 a cada visita
+runTransaction(visitsRef, v => (v || 0) + 1);
+// escuta e atualiza o rodapé em tempo real
+onValue(visitsRef, snap => {
+  const el = document.getElementById('visitCount');
+  if (el) el.textContent = (snap.val() || 0).toLocaleString('pt-BR');
+});
 
 // ─── ORDENAÇÃO ─────────────────────────────────────────────────────────────
 function setSort(type, btn) {
@@ -1038,6 +1114,7 @@ window.toggleUsed    = toggleUsed;
 window.toggleMorador = toggleMorador;
 window.filterCat     = filterCat;
 window.setSort       = setSort;
+window.compartilhar  = compartilhar;
 window.openModal     = openModal;
 window.closeModal    = closeModal;
 window.overlayClick  = overlayClick;
