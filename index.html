@@ -398,8 +398,62 @@
     .avatar-saude        { background: #e0f5ec; }
     .avatar-profissional { background: #e8e0f5; }
     .avatar-transporte   { background: #e0f0f5; }
+    .avatar-informatica  { background: #dceeff; }
 
-    /* ── FAB (botão flutuante) ── */
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--dark); color: var(--cream);
+      padding: 10px 22px; border-radius: 30px;
+      font-size: 0.83rem; font-weight: 500;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s, transform 0.25s;
+      z-index: 500; white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── VOLTAR AO TOPO ── */
+    .back-top {
+      position: fixed; bottom: 28px; left: 24px;
+      width: 44px; height: 44px;
+      background: var(--dark); color: var(--cream);
+      border: none; border-radius: 50%;
+      font-size: 1.1rem; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.22s, transform 0.22s, background 0.15s;
+      z-index: 190;
+    }
+    .back-top.visible { opacity: 1; pointer-events: auto; }
+    .back-top:hover { transform: translateY(-3px); background: var(--green); }
+
+    /* ── BARRA DE REPUTAÇÃO ── */
+    .rep-bar-wrap {
+      padding: 0 16px 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .rep-bar-bg {
+      flex: 1; height: 5px; background: var(--border);
+      border-radius: 10px; overflow: hidden;
+    }
+    .rep-bar-fill {
+      height: 100%; border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+    .rep-label { font-size: 0.68rem; color: var(--text-muted); white-space: nowrap; }
+
+    /* ── BADGE DESTAQUE ── */
+    .badge-top {
+      position: absolute; top: -9px; right: 14px;
+      background: var(--gold); color: #5a3a00;
+      font-size: 0.62rem; font-weight: 700;
+      padding: 2px 9px; border-radius: 20px;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      box-shadow: 0 2px 8px rgba(201,168,76,0.45);
+    }
+    .card { position: relative; }
     .fab {
       position: fixed;
       bottom: 28px;
@@ -608,6 +662,12 @@
   <div class="cards-grid" id="cardsGrid"></div>
 
 </div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- VOLTAR AO TOPO -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Voltar ao topo">↑</button>
 
 <!-- FAB -->
 <button class="fab" onclick="openModal()">
@@ -878,8 +938,8 @@ function renderCards() {
   }
 
   grid.innerHTML = filtered.map((s, i) => {
-    const myVote  = myVotes[`v_${s.id}`] || null;
-    const myUsed  = myVotes[`used_${s.id}`] || false;
+    const myVote    = myVotes[`v_${s.id}`] || null;
+    const myUsed    = myVotes[`used_${s.id}`] || false;
     const upCount   = getCount(s.id, 'up');
     const downCount = getCount(s.id, 'down');
     const usedCount = getCount(s.id, 'used');
@@ -887,8 +947,23 @@ function renderCards() {
     const phone = s.phones[0];
     const phoneDisplay = s.phones.map(formatPhone).join(' / ');
 
+    // Barra de reputação
+    const total = upCount + downCount;
+    const repPct = total > 0 ? Math.round((upCount / total) * 100) : 0;
+    const repColor = repPct >= 70 ? '#4a8c42' : repPct >= 40 ? '#c9a84c' : '#b03a2e';
+    const repLabel = total === 0 ? 'Sem avaliações' : `${repPct}% positivo`;
+    const repBar = total > 0 ? `
+      <div class="rep-bar-wrap">
+        <div class="rep-bar-bg"><div class="rep-bar-fill" style="width:${repPct}%;background:${repColor};"></div></div>
+        <span class="rep-label">${repLabel}</span>
+      </div>` : '';
+
+    // Badge destaque (5+ curtidas)
+    const badge = upCount >= 5 ? `<div class="badge-top">⭐ Destaque</div>` : '';
+
     return `
       <div class="card" style="animation-delay:${Math.min(i * 0.04, 0.4)}s">
+        ${badge}
         <div class="card-header">
           <div class="cat-avatar avatar-${catClass(s.cat)}">${s.emoji}</div>
           <div class="card-title-block">
@@ -903,6 +978,7 @@ function renderCards() {
           ${s.desc}
           <br><small style="color:#aaa9a0;margin-top:4px;display:block">📞 ${phoneDisplay}</small>
         </div>
+        ${repBar}
         <div class="card-divider"></div>
         <div style="padding:10px 16px 0;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
           <button class="vote-btn up ${myVote==='up'?'active':''}" onclick="vote(${s.id},'up')">
@@ -929,6 +1005,23 @@ function renderCards() {
   }).join('');
 }
 
+// ─── TOAST ─────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ─── VOLTAR AO TOPO ────────────────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('backTop');
+  if (btn) btn.classList.toggle('visible', window.scrollY > 400);
+});
+
 // ─── VOTE (Firebase) ───────────────────────────────────────────────────────
 function vote(id, direction) {
   const prev = myVotes[`v_${id}`] || null;
@@ -938,81 +1031,76 @@ function vote(id, direction) {
     if (!data) data = { up: 0, down: 0, used: 0 };
     data.up   = data.up   || 0;
     data.down = data.down || 0;
-
     if (prev === direction) {
-      // desfaz o voto
       data[direction] = Math.max(0, data[direction] - 1);
       myVotes[`v_${id}`] = null;
     } else {
-      if (prev) data[prev] = Math.max(0, data[prev] - 1); // remove voto anterior
+      if (prev) data[prev] = Math.max(0, data[prev] - 1);
       data[direction]++;
       myVotes[`v_${id}`] = direction;
     }
     return data;
   });
   saveMyVotes();
+  showToast(direction === 'up' ? '👍 Avaliação positiva registrada!' : '👎 Avaliação negativa registrada!');
 }
 
 // ─── JÁ USEI (Firebase) ────────────────────────────────────────────────────
 function toggleUsed(id) {
   const wasUsed = myVotes[`used_${id}`] || false;
   const svcRef  = ref(db, `counts/${id}`);
-
   runTransaction(svcRef, data => {
     if (!data) data = { up: 0, down: 0, used: 0 };
     data.used = data.used || 0;
     data.used = wasUsed ? Math.max(0, data.used - 1) : data.used + 1;
     return data;
   });
-
   myVotes[`used_${id}`] = !wasUsed;
   saveMyVotes();
+  showToast(wasUsed ? '↩️ Marcação removida' : '✅ Registrado como usado!');
 }
 
 // ─── COMPARTILHAR CONTATO ──────────────────────────────────────────────────
 function compartilhar(id) {
   const s = services.find(x => x.id === id);
   if (!s) return;
-  const phone = s.phones[0].replace(/\D/g,'');
+
   const phoneDisplay = s.phones.map(formatPhone).join(' / ');
-  const upCount = getCount(id, 'up');
+  const upCount   = getCount(id, 'up');
   const usedCount = getCount(id, 'used');
 
-  const texto = [
-    `🏡 *Veneto Indica — ${s.name}*`,
-    ``,
-    `📂 ${s.cat}`,
-    `📞 ${phoneDisplay}`,
-    ``,
-    s.desc,
-    ``,
-    upCount  > 0 ? `👍 ${upCount} curtida${upCount  > 1 ? 's' : ''}` : '',
-    usedCount > 0 ? `✅ ${usedCount} morador${usedCount > 1 ? 'es' : ''} já usou` : '',
-    ``,
-    `🔗 Veja mais serviços: ${window.location.href}`,
-  ].filter(l => l !== undefined && !(l === '' && texto && texto[texto.length-1] === '')).join('\n');
+  let linhas = [];
+  linhas.push(`🏡 *Veneto Indica — ${s.name}*`);
+  linhas.push('');
+  linhas.push(`📂 ${s.cat}`);
+  linhas.push(`📞 ${phoneDisplay}`);
+  linhas.push('');
+  linhas.push(s.desc);
+  if (upCount   > 0) linhas.push(`👍 ${upCount} curtida${upCount > 1 ? 's' : ''} dos moradores`);
+  if (usedCount > 0) linhas.push(`✅ ${usedCount} morador${usedCount > 1 ? 'es' : ''} já usou`);
+  linhas.push('');
+  linhas.push(`🔗 Mais serviços: ${window.location.href}`);
 
-  // Tenta usar a API nativa de compartilhamento (celular)
-  if (navigator.share) {
-    navigator.share({
-      title: `Veneto Indica — ${s.name}`,
-      text: texto,
-    }).catch(() => {});
-  } else {
-    // Fallback: abre WhatsApp direto no desktop
-    const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
-    window.open(url, '_blank');
-  }
+  const texto = linhas.join('\n');
 
-  // Feedback visual no botão
+  // Feedback visual imediato
   const btn = document.getElementById(`share-${id}`);
   if (btn) {
-    btn.textContent = '✅ Enviado!';
+    btn.textContent = '✅ Compartilhando...';
     btn.classList.add('copied');
     setTimeout(() => {
       btn.textContent = '📤 Compartilhar';
       btn.classList.remove('copied');
-    }, 2000);
+    }, 2500);
+  }
+
+  // Celular: menu nativo (WhatsApp, Telegram, SMS…)
+  if (navigator.share) {
+    navigator.share({ title: `Veneto Indica — ${s.name}`, text: texto })
+      .catch(() => window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank'));
+  } else {
+    // Desktop: abre WhatsApp Web
+    window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
   }
 }
 
