@@ -238,11 +238,30 @@
       font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
       color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
     }
+    .featured-scroller { position: relative; }
     .featured-row {
       display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px;
-      scrollbar-width: none; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
     }
     .featured-row::-webkit-scrollbar { display: none; }
+    .featured-fade {
+      position: absolute; top: 0; bottom: 6px; right: 0; width: 56px;
+      background: linear-gradient(90deg, transparent, var(--bg) 85%);
+      pointer-events: none; transition: opacity .15s;
+    }
+    .featured-fade.hide { opacity: 0; }
+    .featured-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-md);
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      color: var(--text); font-size: 0.95rem; z-index: 2; transition: opacity .15s, transform .15s;
+    }
+    .featured-arrow:hover { transform: translateY(-50%) scale(1.06); }
+    .featured-arrow.prev { left: -14px; }
+    .featured-arrow.next { right: -14px; }
+    .featured-arrow.disabled { opacity: 0; pointer-events: none; }
+    @media (max-width: 640px) { .featured-arrow { display: none; } }
     .fcard {
       flex: 0 0 auto; width: 230px;
       background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
@@ -274,6 +293,10 @@
       gap: 6px;
       padding: 12px 0;
       white-space: nowrap;
+    }
+    @media (min-width: 641px) {
+      .filter-bar { overflow: visible; }
+      .filter-inner { flex-wrap: wrap; white-space: normal; }
     }
     .filter-btn {
       padding: 8px 16px;
@@ -791,7 +814,12 @@
 <!-- FEATURED -->
 <div class="featured-wrap" id="featuredWrap" style="display:none;">
   <div class="featured-title">⭐ Mais bem avaliados</div>
-  <div class="featured-row" id="featuredRow"></div>
+  <div class="featured-scroller">
+    <button class="featured-arrow prev disabled" id="featPrev" aria-label="Ver anteriores">‹</button>
+    <div class="featured-row" id="featuredRow"></div>
+    <div class="featured-fade" id="featuredFade"></div>
+    <button class="featured-arrow next" id="featNext" aria-label="Ver mais">›</button>
+  </div>
 </div>
 
 <!-- FILTER BAR -->
@@ -1085,6 +1113,20 @@ function renderFeatured() {
     renderCards();
     window.scrollTo({top:0,behavior:'smooth'});
   }));
+  requestAnimationFrame(updateFeaturedNav);
+}
+
+function updateFeaturedNav() {
+  const row = document.getElementById('featuredRow');
+  const prev = document.getElementById('featPrev');
+  const next = document.getElementById('featNext');
+  const fade = document.getElementById('featuredFade');
+  if (!row || !prev || !next || !fade) return;
+  const maxScroll = row.scrollWidth - row.clientWidth;
+  prev.classList.toggle('disabled', row.scrollLeft <= 4);
+  const atEnd = row.scrollLeft >= maxScroll - 4;
+  next.classList.toggle('disabled', atEnd || maxScroll <= 0);
+  fade.classList.toggle('hide', atEnd || maxScroll <= 0);
 }
 
 // ─── RENDER ────────────────────────────────────────────────────────────────
@@ -1369,6 +1411,16 @@ document.getElementById('bnSearch').addEventListener('click', () => {
 });
 document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 document.getElementById('bnTheme').addEventListener('click', toggleTheme);
+
+// ─── DESTAQUES: navegação por setas ─────────────────────────────────────────
+document.getElementById('featPrev').addEventListener('click', () => {
+  document.getElementById('featuredRow').scrollBy({ left: -260, behavior: 'smooth' });
+});
+document.getElementById('featNext').addEventListener('click', () => {
+  document.getElementById('featuredRow').scrollBy({ left: 260, behavior: 'smooth' });
+});
+document.getElementById('featuredRow').addEventListener('scroll', updateFeaturedNav);
+window.addEventListener('resize', updateFeaturedNav);
 
 // ─── INIT ──────────────────────────────────────────────────────────────────
 const meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
