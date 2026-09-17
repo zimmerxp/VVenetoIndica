@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Veneto Indica — Painel Administrativo</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#f5f0e8; --dark:#1a1710; --green:#2d5a27; --green-light:#4a8c42; --green-pale:#e8f0e6;
+    --gold:#c9a84c; --gold-light:#f0d98a; --red:#b03a2e; --red-pale:#fceae8;
+    --text:#2c2a24; --text-muted:#7a7668; --border:#ddd8cc; --white:#fff;
+    --radius:12px; --shadow:0 4px 24px rgba(26,23,16,0.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+  header{background:var(--dark);color:var(--cream);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:50;box-shadow:0 2px 20px rgba(0,0,0,.3);}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-icon{width:38px;height:38px;background:var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:19px;}
+  .brand h1{font-family:'Playfair Display',serif;font-size:1.05rem;}
+  .brand span{font-size:.68rem;color:var(--gold-light);text-transform:uppercase;letter-spacing:.06em;}
+  .btn{padding:9px 16px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;}
+  .btn:hover{border-color:var(--green);color:var(--green-light);}
+  .btn-primary{background:var(--green);border-color:var(--green);color:#fff;}
+  .btn-primary:hover{background:var(--green-light);color:#fff;}
+  .btn-danger{background:transparent;border-color:var(--red);color:var(--red);}
+  .btn-danger:hover{background:var(--red-pale);}
+  header .btn{border-color:rgba(255,255,255,.2);color:var(--cream);}
+  header .btn:hover{border-color:var(--gold);color:var(--gold-light);}
+
+  #loginScreen{max-width:380px;margin:64px auto;background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:32px;box-shadow:var(--shadow);}
+  #loginScreen h2{font-family:'Playfair Display',serif;margin-bottom:6px;}
+  #loginScreen p{color:var(--text-muted);font-size:.85rem;margin-bottom:20px;}
+  .form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+  .form-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted);}
+  .form-input,.form-select,.form-textarea{padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.9rem;background:var(--cream);outline:none;width:100%;transition:border-color .15s;}
+  .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--green);background:#fff;}
+  .form-textarea{min-height:70px;resize:vertical;}
+  #loginError{color:var(--red);font-size:.82rem;margin-top:10px;display:none;}
+
+  main{max-width:1000px;margin:0 auto;padding:24px;display:none;}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  .toolbar-left{display:flex;gap:10px;flex-wrap:wrap;align-items:center;flex:1;}
+  .search-box{position:relative;flex:1;min-width:180px;max-width:320px;}
+  .search-box input{width:100%;padding:9px 12px 9px 34px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-family:inherit;font-size:.88rem;}
+  .search-box span{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.5;}
+  select.cat-filter{padding:9px 12px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-family:inherit;font-size:.85rem;}
+
+  .stat-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .pill{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:6px 14px;font-size:.78rem;color:var(--text-muted);}
+  .pill b{color:var(--text);}
+
+  .seed-banner{background:var(--green-pale);border:1.5px solid var(--green);border-radius:12px;padding:16px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .seed-banner p{flex:1;min-width:200px;font-size:.85rem;color:var(--text);}
+  .seed-banner strong{display:block;margin-bottom:2px;}
+
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:1.5px solid var(--border);}
+  thead{background:var(--cream);}
+  th{text-align:left;padding:10px 14px;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted);}
+  td{padding:12px 14px;border-top:1px solid var(--border);font-size:.87rem;vertical-align:top;}
+  tr:hover td{background:#fbfaf6;}
+  .row-actions{display:flex;gap:6px;}
+  .row-actions button{padding:6px 10px;font-size:.78rem;}
+  .badge-morador{background:#e8f0fb;color:#2a5bad;font-size:.68rem;padding:2px 8px;border-radius:20px;font-weight:600;}
+  .badge-externo{background:#f3f0e8;color:#7a6a30;font-size:.68rem;padding:2px 8px;border-radius:20px;font-weight:600;}
+  .muted{color:var(--text-muted);font-size:.8rem;}
+  .table-wrap{overflow-x:auto;}
+  @media (max-width:720px){ table, thead, tbody, th, td, tr { display:block; } thead{display:none;} tr{border-top:1.5px solid var(--border);padding:10px 0;} td{border:none;padding:4px 14px;} td::before{content:attr(data-label);display:block;font-size:.68rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:.04em;margin-bottom:2px;} }
+
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,23,16,.55);z-index:300;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px);}
+  .modal-overlay.open{display:flex;}
+  .modal{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+  .modal-header{background:var(--green);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;}
+  .modal-header h3{color:#fff;font-family:'Playfair Display',serif;font-size:1.05rem;}
+  .modal-close{background:rgba(255,255,255,.15);border:none;border-radius:8px;color:#fff;width:30px;height:30px;cursor:pointer;font-size:1rem;}
+  .modal-body{padding:22px;display:flex;flex-direction:column;gap:12px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:460px){ .form-row{grid-template-columns:1fr;} }
+  .modal-footer{padding:0 22px 22px;display:flex;gap:10px;}
+  .modal-footer .btn{flex:1;}
+  .hint{font-size:.74rem;color:var(--text-muted);}
+  .emoji-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+  .emoji-choice{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;}
+  .emoji-choice.sel{border-color:var(--green);background:var(--green-pale);}
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:var(--cream);padding:10px 22px;border-radius:30px;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;z-index:500;}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-icon">🏡</div>
+    <div>
+      <h1>Veneto Indica</h1>
+      <span>Painel administrativo</span>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <a class="btn" href="index.html" target="_blank" rel="noopener">🔗 Ver site</a>
+    <button class="btn" id="logoutBtn" style="display:none;">Sair</button>
+  </div>
+</header>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <h2>Entrar</h2>
+  <p>Acesso restrito ao mantenedor do catálogo. Faça login com a conta de administrador do Firebase.</p>
+  <div class="form-group">
+    <label class="form-label">E-mail</label>
+    <input class="form-input" id="loginEmail" type="email" autocomplete="username" placeholder="seuemail@exemplo.com">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Senha</label>
+    <input class="form-input" id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••">
+  </div>
+  <button class="btn btn-primary" id="loginBtn" style="width:100%;">Entrar</button>
+  <div id="loginError"></div>
+</div>
+
+<!-- DASHBOARD -->
+<main id="dash">
+
+  <div class="seed-banner" id="seedBanner" style="display:none;">
+    <p><strong>Nenhum serviço encontrado no banco de dados.</strong> Isso é normal na primeira vez que o painel roda com o novo sistema. Clique para importar a lista atual (que hoje vive dentro do HTML) para o Firebase — a partir daí, tudo passa a ser editado por aqui.</p>
+    <button class="btn btn-primary" id="importSeedBtn">📥 Importar dados iniciais</button>
+  </div>
+
+  <div class="stat-pills">
+    <span class="pill"><b id="pillTotal">0</b> serviços</span>
+    <span class="pill"><b id="pillCats">0</b> categorias</span>
+    <span class="pill"><b id="pillMoradores">0</b> de moradores</span>
+  </div>
+
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <div class="search-box"><span>🔍</span><input id="adminSearch" placeholder="Buscar por nome, categoria ou telefone…"></div>
+      <select class="cat-filter" id="adminCatFilter"><option value="">Todas as categorias</option></select>
+    </div>
+    <button class="btn btn-primary" id="addBtn">➕ Novo serviço</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Serviço</th><th>Categoria</th><th>Telefone(s)</th><th>Tipo</th><th></th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- MODAL: ADD/EDIT -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">➕ Novo serviço</h3>
+      <button class="modal-close" id="modalCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Nome do prestador / empresa *</label>
+        <input class="form-input" id="f_nome" placeholder="Ex: João Pintor">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Categoria *</label>
+          <input class="form-input" id="f_cat" list="catList" placeholder="Selecione ou digite uma nova">
+          <datalist id="catList"></datalist>
+        </div>
+        <div class="form-group">
+          <label class="form-label">É morador?</label>
+          <select class="form-select" id="f_morador">
+            <option value="false">Não — Externo</option>
+            <option value="true">Sim — Morador</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Telefone(s) / WhatsApp *</label>
+        <input class="form-input" id="f_tel" placeholder="+5531999999999, +5531988887777">
+        <span class="hint">Separe por vírgula se houver mais de um. Pode digitar sem +55 que o sistema completa.</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <textarea class="form-textarea" id="f_desc" placeholder="O que esse prestador faz…"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ícone (emoji)</label>
+        <input class="form-input" id="f_emoji" maxlength="4" style="max-width:100px;" placeholder="🔧">
+        <div class="emoji-row" id="emojiSuggestions"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="cancelBtn">Cancelar</button>
+      <button class="btn btn-danger" id="deleteBtn" style="display:none;">Excluir</button>
+      <button class="btn btn-primary" id="saveBtn">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, get, set, update, remove, runTransaction, onValue }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDPOUMFRze0mHVte1FxhvGQpvlT8IMQxbk",
+  authDomain: "veneto-indica.firebaseapp.com",
+  projectId: "veneto-indica",
+  storageBucket: "veneto-indica.firebasestorage.app",
+  messagingSenderId: "771993408592",
+  appId: "1:771993408592:web:dea53da3f520e149bf2d55",
+  databaseURL: "https://veneto-indica-default-rtdb.firebaseio.com"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db    = getDatabase(fbApp);
+const auth  = getAuth(fbApp);
+
+// ─── DADOS INICIAIS PARA IMPORTAÇÃO ÚNICA (o catálogo que hoje vive no HTML antigo) ──
+const SEED_SERVICES = [
+  {id:1,cat:'Alimentação',name:'Frango Assado Jardim da Glória',desc:'Frango assado no espeto, ótimo para almoços e jantares. Entrega no condomínio.',phones:['+553186902816'],morador:false,emoji:'🍗'},
+  {id:2,cat:'Alimentação',name:'Garage Burguer',desc:'Hamburgueria artesanal com opções variadas. Delivery disponível.',phones:['+553185876457'],morador:false,emoji:'🍔'},
+  {id:3,cat:'Alimentação',name:'Hamburguer',desc:'Lanches e hambúrgueres sob encomenda.',phones:['+5531996051289'],morador:true,emoji:'🍔'},
+  {id:5,cat:'Alimentação',name:'Top Cheff Pizzaria e Hamburgueria',desc:'Pizzas e hambúrgueres artesanais. Pedidos pelo WhatsApp.',phones:['+553171451323'],morador:false,emoji:'🍕'},
+  {id:6,cat:'Alimentação',name:'Yume Lanches',desc:'Comida japonesa. Delivery e retirada.',phones:['+553182420890'],morador:false,emoji:'🍜'},
+  {id:64,cat:'Alimentação',name:'Delicias da LU',desc:'Biscoitos caseiros, queijos, pimentinhas, doces de pote e mais.',phones:['+5531992188841'],morador:true,emoji:'🍪'},
+  {id:71,cat:'Alimentação',name:'Coxinhas',desc:'Coxinhas tradicionais — R$ 11,00 | Especiais — a partir de R$ 12,50. Entrega disponível.',phones:['+5531988471610'],morador:false,emoji:'🍗'},
+  {id:73,cat:'Alimentação',name:'Delicias de Itaipava',desc:'Cones, doces, sorvetes e mais.',phones:['+553196258160'],morador:false,emoji:'🍪'},
+
+  {id:7,cat:'Beleza e Bem-estar',name:'Cristina — Unhas e Crochê',desc:'Manicure, pedicure e artesanato em crochê sob encomenda.',phones:['+553186179157'],morador:true,emoji:'💅'},
+  {id:8,cat:'Beleza e Bem-estar',name:'FW Estética Automotiva',desc:'Polimento, lavagem e higienização completa de veículos.',phones:['+553188154935'],morador:false,emoji:'🚗'},
+  {id:9,cat:'Beleza e Bem-estar',name:'Family Beleza e Conceito',desc:'Salão completo: corte, coloração e tratamentos capilares.',phones:['+5531971320530'],morador:false,emoji:'✂️'},
+  {id:10,cat:'Beleza e Bem-estar',name:'Kellen Calmon Studio',desc:'Estúdio de beleza: sobrancelha, maquiagem e estética facial.',phones:['+5531989120580'],morador:false,emoji:'💄'},
+  {id:11,cat:'Beleza e Bem-estar',name:'Unha Citta',desc:'Especialista em nail art e alongamentos de unhas.',phones:['+553185541208'],morador:false,emoji:'💅'},
+  {id:12,cat:'Beleza e Bem-estar',name:'Vitória Pascini — Mary Kay',desc:'Consultora Mary Kay. Cosméticos, perfumes e cuidados com a pele.',phones:['+5521979562161'],morador:true,emoji:'🌸'},
+  {id:67,cat:'Beleza e Bem-estar',name:'Izabella Pacifico — Mary Kay',desc:'Cosméticos, maquiagem, hidratantes e perfumes femininos e masculinos. Produtos a pronta entrega.',phones:['+5531991197353'],morador:true,emoji:'🧴'},
+
+  {id:13,cat:'Manutenção e Reformas',name:'Claudio — Máquinas de Lavar',desc:'Fica na rua Bambuí, em frente ao Bloco 01. Conserto de máquinas de lavar.',phones:['+553186156418'],morador:false,emoji:'🔧'},
+  {id:14,cat:'Manutenção e Reformas',name:'Cláudio Chaveiro',desc:'Chaveiro 24h: abertura de portas, cópias e fechaduras.',phones:['+553199037527'],morador:false,emoji:'🔑'},
+  {id:15,cat:'Manutenção e Reformas',name:'Eletricista',desc:'Serviços gerais de elétrica residencial.',phones:['+553199291575'],morador:false,emoji:'⚡'},
+  {id:17,cat:'Manutenção e Reformas',name:'Herci — Conserto de Fogão',desc:'Especialista em manutenção e conserto de fogões a gás.',phones:['+553184629367'],morador:false,emoji:'🔥'},
+  {id:18,cat:'Manutenção e Reformas',name:'Jailson Eletricista',desc:'Instalações elétricas residenciais e comerciais.',phones:['+553188210780'],morador:false,emoji:'⚡'},
+  {id:19,cat:'Manutenção e Reformas',name:'Junio Mecânico — Kodato',desc:'Mecânica automotiva geral, revisão e reparos.',phones:['+553186560027'],morador:false,emoji:'🔩'},
+  {id:20,cat:'Manutenção e Reformas',name:'Lisboa — Montagem de Móveis',desc:'Montagem profissional de móveis planejados e kit.',phones:['+5531973631477'],morador:false,emoji:'🪑'},
+  {id:21,cat:'Manutenção e Reformas',name:'Luiz Montador',desc:'Montagem de móveis em geral, rápido e cuidadoso.',phones:['+553196874627'],morador:false,emoji:'🪑'},
+  {id:22,cat:'Manutenção e Reformas',name:'Marcelo Andrade — Conserta Lavadora',desc:'Conserto de lavadoras e secadoras de roupas.',phones:['+553199979208'],morador:false,emoji:'🔧'},
+  {id:23,cat:'Manutenção e Reformas',name:'Mauricio Pedreiro',desc:'Serviços de pedreiro: reformas, azulejos, pintura e acabamentos.',phones:['+553186892181','+553194980179','+553195462724'],morador:false,emoji:'🏗️'},
+  {id:24,cat:'Manutenção e Reformas',name:'Max Eletricista',desc:'Eletricista residencial, instalações e reparos.',phones:['+553185080003'],morador:false,emoji:'⚡'},
+  {id:25,cat:'Manutenção e Reformas',name:'Paulo — Interfone',desc:'Instalação e manutenção de interfones e porteiros eletrônicos.',phones:['+5531988045232'],morador:false,emoji:'📞'},
+  {id:26,cat:'Manutenção e Reformas',name:'Paulo Santos — Montador',desc:'Montagem de móveis planejados e sob medida.',phones:['+553182646613'],morador:false,emoji:'🪑'},
+  {id:27,cat:'Manutenção e Reformas',name:'Sabiá Pedreiro',desc:'Serviços de alvenaria, reformas e pequenos reparos.',phones:['+5531996920243'],morador:false,emoji:'🏗️'},
+  {id:29,cat:'Manutenção e Reformas',name:'Toninho Eletricista',desc:'Instalações elétricas, quadros e iluminação.',phones:['+5531992134261','+5531997390446'],morador:false,emoji:'⚡'},
+  {id:30,cat:'Manutenção e Reformas',name:'Telhados — Madeireira Serralheria',desc:'Telhados, estruturas metálicas e trabalhos em madeira.',phones:['+5531997287811'],morador:false,emoji:'🏠'},
+  {id:31,cat:'Manutenção e Reformas',name:'Vagner Mecânico',desc:'Mecânica geral de carros e motos.',phones:['+5531991945595'],morador:false,emoji:'🔩'},
+  {id:32,cat:'Manutenção e Reformas',name:'Valdeci Eletricista',desc:'Serviços elétricos em geral, atendimento rápido.',phones:['+553183047363'],morador:false,emoji:'⚡'},
+  {id:62,cat:'Manutenção e Reformas',name:'Montagens FARFÁN',desc:'Montagem e desmontagens de móveis — móveis sob medida.',phones:['+5531988000314'],morador:true,emoji:'🪑'},
+  {id:70,cat:'Manutenção e Reformas',name:'Elcio Apolônio',desc:'Elétrica e hidráulica.',phones:['+55319771006031'],morador:false,emoji:'⚡'},
+
+  {id:66,cat:'Informática',name:'ZTech Informática',desc:'Serviços de informática: conserto de computadores, formatação, configuração de rede e mais. ztech.website',phones:['+5531973595240'],morador:true,emoji:'💻'},
+
+  {id:33,cat:'Outros Serviços',name:'Aluguel de Mesas e Cadeiras — Real Festas',desc:'Locação de mesas, cadeiras e utensílios para festas e eventos.',phones:['+553197180393'],morador:false,emoji:'🎉'},
+  {id:34,cat:'Outros Serviços',name:'Costureira',desc:'Serviços de costura em geral: ajustes, reparos e confecção.',phones:['+5531999411556'],morador:false,emoji:'🧵'},
+  {id:35,cat:'Outros Serviços',name:'Entre Cães e Gatos',desc:'Pet shop e serviços para animais de estimação.',phones:['+5531989381250'],morador:false,emoji:'🐾'},
+  {id:36,cat:'Outros Serviços',name:'FRB Controle de Pragas — Fábio',desc:'Dedetização, descupinização e controle de pragas em geral.',phones:['+553196625856'],morador:false,emoji:'🦟'},
+  {id:37,cat:'Outros Serviços',name:'Fabiara Festas',desc:'Organização e decoração de festas e eventos.',phones:['+553186622340'],morador:false,emoji:'🎊'},
+  {id:38,cat:'Outros Serviços',name:'Luciara Sá — GPS',desc:'Serviços de navegação GPS e assessoria logística.',phones:['+553191102376'],morador:true,emoji:'📍'},
+  {id:39,cat:'Outros Serviços',name:'Maria Costureira Baependi',desc:'Costura, ajustes e reformas de roupas. Na esquina da Baependi com Bambuí.',phones:['+553199411556'],morador:false,emoji:'🧵'},
+  {id:40,cat:'Outros Serviços',name:'Rodrigo — Aluguel Mesas e Cadeiras',desc:'Aluguel de mobiliário para eventos e festas.',phones:['+553196762554'],morador:false,emoji:'🎉'},
+  {id:41,cat:'Outros Serviços',name:'Simone Costureira Silva',desc:'Costureira com experiência em roupas sob medida e bordados.',phones:['+5531995337353'],morador:false,emoji:'🧵'},
+  {id:42,cat:'Outros Serviços',name:'Valdir — Mesas e Cadeiras',desc:'Locação de mesas e cadeiras para eventos.',phones:['+553199754079'],morador:false,emoji:'🎉'},
+  {id:63,cat:'Outros Serviços',name:'PersonalizAlí',desc:'Serviços de impressão, cópias e muito mais.',phones:['+5531982564070'],morador:true,emoji:'🖨️'},
+  {id:68,cat:'Outros Serviços',name:'Serv Shoes',desc:'Loja de calçados.',phones:['+5531983967362'],morador:true,emoji:'👟'},
+
+  {id:43,cat:'Saúde e Farmácia',name:'Farmácia Graga Maxi',desc:'Farmácia no Morro Alto. Realiza entregas no condomínio.',phones:['+553196982254'],morador:false,emoji:'💊'},
+  {id:44,cat:'Saúde e Farmácia',name:'Farmácia Drogaria São Félix',desc:'Medicamentos e produtos de saúde com atendimento rápido.',phones:['+553136215800'],morador:false,emoji:'🏥'},
+  {id:46,cat:'Saúde e Farmácia',name:'Gerais Farmácia Vespasiano',desc:'Farmácia ao lado do EPA. Medicamentos e dermocosméticos.',phones:['+553175150038'],morador:false,emoji:'🏥'},
+  {id:47,cat:'Saúde e Farmácia',name:'Rubi Farma',desc:'Farmácia com delivery e atendimento especializado.',phones:['+553182811069'],morador:false,emoji:'💊'},
+  {id:48,cat:'Saúde e Farmácia',name:'Hiperfarma Santa Clara',desc:'Grandes farmácias com variedade de produtos e bons preços.',phones:['+553191142827'],morador:false,emoji:'🏥'},
+  {id:65,cat:'Saúde e Farmácia',name:'Encanto e Estilo',desc:'Cosméticos (Avon/Natura/Eudora/Boticário/Racco) e peças íntimas. Insta @encannto_etilo.',phones:['+55319918888841'],morador:false,emoji:'👙'},
+
+  {id:49,cat:'Serviços Profissionais',name:'Contabilidade — Claudia Silva',desc:'Serviços contábeis, declaração de IR e consultoria fiscal.',phones:['+553187241861'],morador:false,emoji:'📊'},
+  {id:50,cat:'Serviços Profissionais',name:'Daisymar — DGCO Compras',desc:'Assessoria em compras, cotações e procurement.',phones:['+553199952973'],morador:true,emoji:'🛒'},
+  {id:51,cat:'Serviços Profissionais',name:'Despachante Valdemar',desc:'Despachante para documentação de veículos e DETRAN.',phones:['+553199881538'],morador:false,emoji:'📋'},
+  {id:53,cat:'Serviços Profissionais',name:'Renata Gomes — Advogada',desc:'Consultoria jurídica: direito civil, trabalhista e imobiliário.',phones:['+5531999953364'],morador:false,emoji:'⚖️'},
+  {id:69,cat:'Serviços Profissionais',name:'Master Clean',desc:'Limpeza e higienização de estofados (sofá, cadeiras, poltronas, banco de carro e outros).',phones:['+5531999953364'],morador:false,emoji:'🛋️'},
+
+  {id:55,cat:'Transporte e Logística',name:'Andreia — Van Escolar',desc:'Van escolar para transporte de crianças até a escola.',phones:['+553185782731'],morador:false,emoji:'🚌'},
+  {id:56,cat:'Transporte e Logística',name:'Carreto',desc:'Serviço de carreto para mudanças e transporte de cargas.',phones:['+553185958436'],morador:false,emoji:'🚛'},
+  {id:57,cat:'Transporte e Logística',name:'Davi Uber',desc:'Uber particular, corridas e traslados.',phones:['+553175743327'],morador:false,emoji:'🚕'},
+  {id:58,cat:'Transporte e Logística',name:'Divino Carreto',desc:'Carreto para pequenas mudanças e transporte de itens.',phones:['+553197656494'],morador:false,emoji:'🚛'},
+  {id:59,cat:'Transporte e Logística',name:'Guilherme — JG Transportes',desc:'Transporte de cargas e fretes regionais.',phones:['+5531985371409','+5531995586818'],morador:false,emoji:'🚚'},
+  {id:60,cat:'Transporte e Logística',name:'Mototaxi Veriano',desc:'Mototáxi rápido para entregas e corridas curtas.',phones:['+553198465696'],morador:false,emoji:'🏍️'},
+  {id:61,cat:'Transporte e Logística',name:'Sr. Nico Carreto',desc:'Serviço de carreto confiável para mudanças e fretes.',phones:['+553197259354'],morador:false,emoji:'🚛'},
+  {id:72,cat:'Transporte e Logística',name:'Taxi - João Guilhermer',desc:'Taxi particular, corridas e traslados.',phones:['+5531975422149'],morador:false,emoji:'🚕'},
+];
+
+const CAT_EMOJI = {
+  'Alimentação':'🍔','Beleza e Bem-estar':'💅','Manutenção e Reformas':'🔧','Saúde e Farmácia':'💊',
+  'Informática':'🖥️','Serviços Profissionais':'💼','Transporte e Logística':'🚗','Outros Serviços':'🎪',
+};
+const EMOJI_SETS = {
+  'Alimentação':['🍔','🍕','🍗','🍜','🍪','🍱','🍰','☕'],
+  'Beleza e Bem-estar':['💅','💄','✂️','🌸','🧴','💇'],
+  'Manutenção e Reformas':['🔧','⚡','🔑','🪑','🏗️','🔩','🏠','🔥'],
+  'Saúde e Farmácia':['💊','🏥','👙','🩺'],
+  'Informática':['💻','🖥️','🖨️','📶'],
+  'Serviços Profissionais':['💼','📊','⚖️','📋','🛒','🛋️'],
+  'Transporte e Logística':['🚗','🚕','🚛','🚌','🚚','🏍️'],
+  'Outros Serviços':['🎪','🎉','🧵','🐾','🦟','📍','🖨️','👟'],
+};
+
+let services = [];
+let editingId = null;
+
+// ─── TOAST ─────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2400); }
+
+// ─── AUTENTICAÇÃO ──────────────────────────────────────────────────────────
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+  signInWithEmailAndPassword(auth, email, pass).catch(err => {
+    errEl.textContent = 'Não foi possível entrar. Confira o e-mail e a senha. (' + err.code + ')';
+    errEl.style.display = 'block';
+  });
+}
+
+document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+
+onAuthStateChanged(auth, user => {
+  const logged = !!user;
+  document.getElementById('loginScreen').style.display = logged ? 'none' : 'block';
+  document.getElementById('dash').style.display = logged ? 'block' : 'none';
+  document.getElementById('logoutBtn').style.display = logged ? 'inline-block' : 'none';
+  if (logged) startListening();
+});
+
+// ─── DADOS (só ligamos o listener depois do login) ─────────────────────────
+let listening = false;
+function startListening() {
+  if (listening) return;
+  listening = true;
+  onValue(ref(db, 'services'), snap => {
+    const val = snap.val() || {};
+    services = Object.entries(val).map(([id, s]) => ({ id: Number(id), ...s, phones: s.phones || [] }));
+    document.getElementById('seedBanner').style.display = services.length === 0 ? 'flex' : 'none';
+    renderTable();
+  });
+}
+
+document.getElementById('importSeedBtn').addEventListener('click', async () => {
+  if (!confirm(`Importar ${SEED_SERVICES.length} serviços para o Firebase? Isso só deve ser feito uma vez.`)) return;
+  const updates = {};
+  let maxId = 0;
+  SEED_SERVICES.forEach(s => { updates[`services/${s.id}`] = { cat:s.cat, name:s.name, desc:s.desc, phones:s.phones, morador:s.morador, emoji:s.emoji, createdAt: Date.now() }; maxId = Math.max(maxId, s.id); });
+  updates['meta/nextId'] = maxId + 1;
+  try {
+    await update(ref(db), updates);
+    showToast('✅ Importação concluída!');
+  } catch (e) {
+    alert('Erro ao importar: ' + e.message + '\n\nVerifique se as regras de segurança do Firebase permitem escrita em "services" para usuários autenticados.');
+  }
+});
+
+// ─── RENDER TABELA ─────────────────────────────────────────────────────────
+function escapeHtml(str){ return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function formatPhone(phone){ let p=phone.replace(/^\+55/,'').replace(/\D/g,''); if(p.length===11) return `(${p.slice(0,2)}) ${p.slice(2,7)}-${p.slice(7)}`; if(p.length===10) return `(${p.slice(0,2)}) ${p.slice(2,6)}-${p.slice(6)}`; return phone; }
+
+function populateCatFilters() {
+  const cats = [...new Set(services.map(s => s.cat))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const sel = document.getElementById('adminCatFilter');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Todas as categorias</option>' + cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  sel.value = cur;
+  const dl = document.getElementById('catList');
+  const allCats = [...new Set([...Object.keys(CAT_EMOJI), ...cats])];
+  dl.innerHTML = allCats.map(c=>`<option value="${escapeHtml(c)}">`).join('');
+}
+
+function renderTable() {
+  populateCatFilters();
+  const q = document.getElementById('adminSearch').value.toLowerCase();
+  const catF = document.getElementById('adminCatFilter').value;
+  const filtered = services.filter(s => {
+    const matchQ = !q || s.name.toLowerCase().includes(q) || s.cat.toLowerCase().includes(q) || (s.phones||[]).join(' ').includes(q);
+    const matchC = !catF || s.cat === catF;
+    return matchQ && matchC;
+  }).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
+
+  document.getElementById('pillTotal').textContent = services.length;
+  document.getElementById('pillCats').textContent = new Set(services.map(s=>s.cat)).size;
+  document.getElementById('pillMoradores').textContent = services.filter(s=>s.morador).length;
+
+  const tbody = document.getElementById('tbody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="muted" style="text-align:center;padding:30px;">Nenhum serviço encontrado.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(s => `
+    <tr>
+      <td data-label="Serviço"><strong>${s.emoji||'🏷️'} ${escapeHtml(s.name)}</strong><div class="muted">${escapeHtml((s.desc||'').slice(0,70))}${(s.desc||'').length>70?'…':''}</div></td>
+      <td data-label="Categoria">${escapeHtml(s.cat)}</td>
+      <td data-label="Telefone(s)">${(s.phones||[]).map(formatPhone).join('<br>')}</td>
+      <td data-label="Tipo">${s.morador ? '<span class="badge-morador">Morador</span>' : '<span class="badge-externo">Externo</span>'}</td>
+      <td data-label="Ações"><div class="row-actions"><button class="btn" data-edit="${s.id}">✏️ Editar</button></div></td>
+    </tr>
+  `).join('');
+  tbody.querySelectorAll('[data-edit]').forEach(btn => btn.addEventListener('click', () => openEdit(Number(btn.dataset.edit))));
+}
+
+document.getElementById('adminSearch').addEventListener('input', renderTable);
+document.getElementById('adminCatFilter').addEventListener('change', renderTable);
+
+// ─── MODAL ADD/EDIT ─────────────────────────────────────────────────────────
+const modal = document.getElementById('modalOverlay');
+function openModal(){ modal.classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(){ modal.classList.remove('open'); document.body.style.overflow=''; }
+document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+document.getElementById('cancelBtn').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+function fillEmojiSuggestions(cat) {
+  const row = document.getElementById('emojiSuggestions');
+  const set = EMOJI_SETS[cat] || ['🏷️','⭐','📌'];
+  row.innerHTML = set.map(e => `<button type="button" class="emoji-choice" data-e="${e}">${e}</button>`).join('');
+  row.querySelectorAll('[data-e]').forEach(b => b.addEventListener('click', () => {
+    document.getElementById('f_emoji').value = b.dataset.e;
+    row.querySelectorAll('.emoji-choice').forEach(x=>x.classList.remove('sel'));
+    b.classList.add('sel');
+  }));
+}
+document.getElementById('f_cat').addEventListener('input', e => fillEmojiSuggestions(e.target.value));
+
+document.getElementById('addBtn').addEventListener('click', () => {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = '➕ Novo serviço';
+  document.getElementById('deleteBtn').style.display = 'none';
+  ['f_nome','f_cat','f_tel','f_desc','f_emoji'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f_morador').value = 'false';
+  fillEmojiSuggestions('');
+  openModal();
+});
+
+function openEdit(id) {
+  const s = services.find(x => x.id === id);
+  if (!s) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = '✏️ Editar serviço';
+  document.getElementById('deleteBtn').style.display = 'inline-block';
+  document.getElementById('f_nome').value = s.name || '';
+  document.getElementById('f_cat').value = s.cat || '';
+  document.getElementById('f_tel').value = (s.phones||[]).join(', ');
+  document.getElementById('f_desc').value = s.desc || '';
+  document.getElementById('f_morador').value = s.morador ? 'true' : 'false';
+  document.getElementById('f_emoji').value = s.emoji || '';
+  fillEmojiSuggestions(s.cat || '');
+  openModal();
+}
+
+function normalizePhone(raw) {
+  let p = raw.trim().replace(/[^\d+]/g,'');
+  if (!p) return null;
+  if (p.startsWith('+')) return p;
+  if (p.startsWith('55')) return '+' + p;
+  return '+55' + p;
+}
+
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  const nome = document.getElementById('f_nome').value.trim();
+  const cat  = document.getElementById('f_cat').value.trim();
+  const telRaw = document.getElementById('f_tel').value.trim();
+  const desc = document.getElementById('f_desc').value.trim();
+  const morador = document.getElementById('f_morador').value === 'true';
+  const emoji = document.getElementById('f_emoji').value.trim() || CAT_EMOJI[cat] || '🏷️';
+
+  if (!nome || !cat || !telRaw) { alert('Preencha nome, categoria e telefone.'); return; }
+  const phones = telRaw.split(',').map(normalizePhone).filter(Boolean);
+  if (phones.length === 0) { alert('Informe pelo menos um telefone válido.'); return; }
+
+  const payload = { cat, name: nome, desc, phones, morador, emoji };
+
+  try {
+    if (editingId) {
+      await update(ref(db, `services/${editingId}`), payload);
+      showToast('✅ Serviço atualizado!');
+    } else {
+      const nextIdRef = ref(db, 'meta/nextId');
+      const result = await runTransaction(nextIdRef, cur => {
+        if (cur === null || cur === undefined) cur = Math.max(0, ...services.map(s => s.id)) + 1;
+        return cur + 1; // guarda o PRÓXIMO id disponível
+      });
+      const newId = result.snapshot.val() - 1; // o id que acabamos de reservar
+      payload.createdAt = Date.now();
+      await set(ref(db, `services/${newId}`), payload);
+      showToast('✅ Serviço adicionado!');
+    }
+    closeModal();
+  } catch (e) {
+    alert('Erro ao salvar: ' + e.message + '\n\nConfira as regras de segurança do Firebase (o nó "services" deve permitir escrita para usuários autenticados).');
+  }
+});
+
+document.getElementById('deleteBtn').addEventListener('click', async () => {
+  if (!editingId) return;
+  const s = services.find(x => x.id === editingId);
+  if (!confirm(`Excluir "${s ? s.name : editingId}" do catálogo? Essa ação não pode ser desfeita.`)) return;
+  try {
+    await remove(ref(db, `services/${editingId}`));
+    showToast('🗑️ Serviço excluído.');
+    closeModal();
+  } catch (e) {
+    alert('Erro ao excluir: ' + e.message);
+  }
+});
+</script>
+</body>
+</html>
