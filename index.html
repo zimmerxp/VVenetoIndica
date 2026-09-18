@@ -1488,26 +1488,12 @@ document.getElementById('enviarBtn').addEventListener('click', async () => {
     });
   } catch (e) {
     console.error(e);
+    sendBtn.disabled = false;
+    alert('Não foi possível enviar sua indicação agora. Tente novamente em instantes.');
+    return;
   }
   sendBtn.disabled = false;
 
-  // avisa o admin em tempo real via WhatsApp (a indicação em si já está salva acima)
-  const linhas = [
-    '📋 *NOVA INDICAÇÃO PENDENTE — Villa Veneto*',
-    '',
-    `👤 *Prestador:* ${nome}`,
-    `📂 *Categoria:* ${cat}`,
-    `📞 *Telefone:* ${tel}`,
-    `🏘️ *Morador:* ${morador}`,
-    desc  ? `📝 *Descrição:* ${desc}` : '',
-    quem  ? `✅ *Indicado por:* ${quem}` : '',
-    '',
-    '👉 Aprove no painel administrativo.',
-  ].filter(Boolean).join('\n');
-
-  const numero = '5531973595240';
-  const url = `https://wa.me/${numero}?text=${encodeURIComponent(linhas)}`;
-  window.open(url, '_blank');
   closeModal();
   showToast('✅ Indicação enviada! Ela será avaliada pelo administrador antes de entrar no catálogo.', 4500);
 
