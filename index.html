@@ -729,6 +729,14 @@
       transition: background 0.15s, transform 0.1s;
     }
     .btn-send:hover { background: #1ebe5a; transform: scale(1.02); }
+    .btn-send.btn-accent { background: var(--accent); }
+    .btn-send.btn-accent:hover { background: var(--accent-strong); }
+    .comment-item { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
+    .comment-item .c-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 3px; }
+    .comment-item .c-name { font-size: 0.8rem; font-weight: 700; color: var(--text); }
+    .comment-item .c-date { font-size: 0.68rem; color: var(--text-soft); white-space: nowrap; }
+    .comment-item .c-text { font-size: 0.83rem; color: var(--text-muted); line-height: 1.45; white-space: pre-wrap; }
+    .comments-empty { text-align: center; padding: 24px 12px; color: var(--text-muted); font-size: 0.85rem; }
 
     /* ── FOOTER ── */
     footer {
@@ -877,7 +885,7 @@
     <div class="modal-header">
       <div class="modal-header-text">
         <h3>📋 Indicar novo serviço</h3>
-        <p>Preencha e enviaremos a sugestão via WhatsApp</p>
+        <p>Sua indicação passa por uma avaliação do administrador antes de entrar no catálogo</p>
       </div>
       <button class="modal-close" id="modalCloseBtn">✕</button>
     </div>
@@ -923,12 +931,56 @@
           <input class="form-input" id="f_quem" type="text" placeholder="Quem indica?">
         </div>
       </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Avisar quando for aprovado?</label>
+          <select class="form-select" id="f_notif_tipo">
+            <option value="">Não quero aviso</option>
+            <option value="whatsapp">Sim, por WhatsApp</option>
+            <option value="email">Sim, por e-mail</option>
+          </select>
+        </div>
+        <div class="form-group" id="f_notif_valor_wrap" style="display:none;">
+          <label class="form-label" id="f_notif_valor_label">Contato</label>
+          <input class="form-input" id="f_notif_valor" type="text" placeholder="">
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" id="modalCancelBtn">Cancelar</button>
       <button class="btn-send" id="enviarBtn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        Enviar via WhatsApp
+        Enviar indicação
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- COMMENTS MODAL -->
+<div class="modal-overlay" id="commentsOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-text">
+        <h3 id="commentsTitle">💬 Comentários</h3>
+        <p>O que os moradores estão dizendo sobre esse prestador</p>
+      </div>
+      <button class="modal-close" id="commentsCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="commentsList" style="display:flex;flex-direction:column;gap:10px;max-height:280px;overflow-y:auto;"></div>
+      <div class="form-group">
+        <label class="form-label">Seu nome (opcional)</label>
+        <input class="form-input" id="c_nome" type="text" placeholder="Como quer aparecer no comentário">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Comentário</label>
+        <textarea class="form-textarea" id="c_texto" placeholder="Conte sua experiência com esse prestador…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" id="commentsCancelBtn">Fechar</button>
+      <button class="btn-send btn-accent" id="commentsSendBtn">
+        <span>💬</span> Comentar
       </button>
     </div>
   </div>
@@ -946,7 +998,7 @@
 <script type="module">
 // ─── FIREBASE ──────────────────────────────────────────────────────────────
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, runTransaction, onValue }
+import { getDatabase, ref, runTransaction, onValue, push, set }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -971,6 +1023,8 @@ let somenteMoradores = false;
 let currentSort = 'az';
 
 let fbCounts = {}; // { "1": {up:3, down:1, used:2}, ... }
+let fbComments = {}; // { "1": { pushKey: {nome, texto, createdAt} }, ... }
+let openCommentsFor = null; // id do serviço com o modal de comentários aberto
 
 const myVotes = JSON.parse(localStorage.getItem('vv_my_votes') || '{}');
 function saveMyVotes() { localStorage.setItem('vv_my_votes', JSON.stringify(myVotes)); }
@@ -1016,6 +1070,12 @@ onValue(ref(db, 'services'), snap => {
 onValue(ref(db, 'counts'), snap => {
   fbCounts = snap.val() || {};
   renderCards();
+});
+
+onValue(ref(db, 'comments'), snap => {
+  fbComments = snap.val() || {};
+  renderCards();
+  if (openCommentsFor) renderCommentsModal(openCommentsFor);
 });
 
 // ─── HELPERS ───────────────────────────────────────────────────────────────
@@ -1172,6 +1232,7 @@ function renderCards() {
     const upCount   = getCount(s.id, 'up');
     const downCount = getCount(s.id, 'down');
     const usedCount = getCount(s.id, 'used');
+    const commentCount = Object.keys(fbComments[s.id] || {}).length;
 
     const phones = s.phones && s.phones.length ? s.phones : [''];
     const phone = phones[0];
@@ -1219,6 +1280,9 @@ function renderCards() {
           <button class="vote-btn used ${myUsed?'active':''}" data-used-id="${s.id}" title="Marcar que você já usou este serviço">
             <span class="emoji">✅</span> Já usei <span id="used-${s.id}">${usedCount > 0 ? usedCount : ''}</span>
           </button>
+          <button class="vote-btn" data-comments-id="${s.id}" title="Ver comentários">
+            <span class="emoji">💬</span> ${commentCount > 0 ? commentCount : 'Comentar'}
+          </button>
           <button class="share-btn" id="share-${s.id}" data-share-id="${s.id}" title="Compartilhar contato">
             📤 Compartilhar
           </button>
@@ -1236,17 +1300,18 @@ function renderCards() {
   grid.querySelectorAll('[data-vote-id]').forEach(btn => btn.addEventListener('click', () => vote(Number(btn.dataset.voteId), btn.dataset.dir)));
   grid.querySelectorAll('[data-used-id]').forEach(btn => btn.addEventListener('click', () => toggleUsed(Number(btn.dataset.usedId))));
   grid.querySelectorAll('[data-share-id]').forEach(btn => btn.addEventListener('click', () => compartilhar(Number(btn.dataset.shareId))));
+  grid.querySelectorAll('[data-comments-id]').forEach(btn => btn.addEventListener('click', () => openComments(Number(btn.dataset.commentsId))));
 }
 
 // ─── TOAST ─────────────────────────────────────────────────────────────────
 let toastTimer;
-function showToast(msg) {
+function showToast(msg, duration) {
   const t = document.getElementById('toast');
   if (!t) return;
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  toastTimer = setTimeout(() => t.classList.remove('show'), duration || 2200);
 }
 
 // ─── VOLTAR AO TOPO ────────────────────────────────────────────────────────
@@ -1370,21 +1435,65 @@ document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
 document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
 document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target.id === 'modalOverlay') closeModal(); });
 
-document.getElementById('enviarBtn').addEventListener('click', () => {
-  const nome    = document.getElementById('f_nome').value.trim();
-  const cat     = document.getElementById('f_cat').value;
-  const tel     = document.getElementById('f_tel').value.trim();
-  const desc    = document.getElementById('f_desc').value.trim();
-  const morador = document.getElementById('f_morador').value;
-  const quem    = document.getElementById('f_quem').value.trim();
+// ─── AVISO DE APROVAÇÃO: mostra/oculta o campo de contato ─────────────────
+document.getElementById('f_notif_tipo').addEventListener('change', function() {
+  const wrap  = document.getElementById('f_notif_valor_wrap');
+  const label = document.getElementById('f_notif_valor_label');
+  const input = document.getElementById('f_notif_valor');
+  if (this.value === 'whatsapp') {
+    wrap.style.display = 'flex';
+    label.textContent = 'Seu WhatsApp';
+    input.type = 'tel';
+    input.placeholder = '(31) 9 9999-9999';
+  } else if (this.value === 'email') {
+    wrap.style.display = 'flex';
+    label.textContent = 'Seu e-mail';
+    input.type = 'email';
+    input.placeholder = 'voce@exemplo.com';
+  } else {
+    wrap.style.display = 'none';
+    input.value = '';
+  }
+});
+
+document.getElementById('enviarBtn').addEventListener('click', async () => {
+  const nome       = document.getElementById('f_nome').value.trim();
+  const cat        = document.getElementById('f_cat').value;
+  const tel        = document.getElementById('f_tel').value.trim();
+  const desc       = document.getElementById('f_desc').value.trim();
+  const morador    = document.getElementById('f_morador').value;
+  const quem       = document.getElementById('f_quem').value.trim();
+  const notifTipo  = document.getElementById('f_notif_tipo').value;
+  const notifValor = document.getElementById('f_notif_valor').value.trim();
 
   if (!nome || !cat || !tel) {
     alert('Por favor, preencha pelo menos o nome, a categoria e o telefone. 😊');
     return;
   }
+  if (notifTipo && !notifValor) {
+    alert('Se quiser receber aviso, preencha o contato (ou selecione "Não quero aviso"). 😊');
+    return;
+  }
 
+  const sendBtn = document.getElementById('enviarBtn');
+  sendBtn.disabled = true;
+
+  // grava como pendente no Firebase — só entra no catálogo depois que o admin aprovar
+  try {
+    const pendingRef = push(ref(db, 'pending'));
+    await set(pendingRef, {
+      nome, cat, tel, desc, morador, quem,
+      notif: notifTipo ? { tipo: notifTipo, valor: notifValor } : null,
+      createdAt: Date.now(),
+    });
+  } catch (e) {
+    console.error(e);
+  }
+  sendBtn.disabled = false;
+
+  // avisa o admin em tempo real via WhatsApp (a indicação em si já está salva acima)
   const linhas = [
-    '📋 *INDICAÇÃO DE SERVIÇO — Villa Veneto*',
+    '📋 *NOVA INDICAÇÃO PENDENTE — Villa Veneto*',
     '',
     `👤 *Prestador:* ${nome}`,
     `📂 *Categoria:* ${cat}`,
@@ -1392,15 +1501,75 @@ document.getElementById('enviarBtn').addEventListener('click', () => {
     `🏘️ *Morador:* ${morador}`,
     desc  ? `📝 *Descrição:* ${desc}` : '',
     quem  ? `✅ *Indicado por:* ${quem}` : '',
+    '',
+    '👉 Aprove no painel administrativo.',
   ].filter(Boolean).join('\n');
 
   const numero = '5531973595240';
   const url = `https://wa.me/${numero}?text=${encodeURIComponent(linhas)}`;
   window.open(url, '_blank');
   closeModal();
+  showToast('✅ Indicação enviada! Ela será avaliada pelo administrador antes de entrar no catálogo.', 4500);
 
-  ['f_nome','f_cat','f_tel','f_desc','f_quem'].forEach(id => document.getElementById(id).value = '');
+  ['f_nome','f_cat','f_tel','f_desc','f_quem','f_notif_valor'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f_morador').value = 'Não';
+  document.getElementById('f_notif_tipo').value = '';
+  document.getElementById('f_notif_valor_wrap').style.display = 'none';
+});
+
+// ─── COMENTÁRIOS ────────────────────────────────────────────────────────────
+function openComments(id) {
+  openCommentsFor = id;
+  renderCommentsModal(id);
+  document.getElementById('commentsOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeComments() {
+  openCommentsFor = null;
+  document.getElementById('commentsOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function renderCommentsModal(id) {
+  const s = services.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('commentsTitle').textContent = `💬 Comentários — ${s.name}`;
+  const listEl = document.getElementById('commentsList');
+  const items = Object.entries(fbComments[id] || {}).sort((a, b) => (a[1].createdAt||0) - (b[1].createdAt||0));
+  if (items.length === 0) {
+    listEl.innerHTML = `<div class="comments-empty">Nenhum comentário ainda. Seja o primeiro a comentar! 🙂</div>`;
+    return;
+  }
+  listEl.innerHTML = items.map(([key, c]) => `
+    <div class="comment-item">
+      <div class="c-head">
+        <span class="c-name">${escapeHtml(c.nome || 'Morador')}</span>
+        <span class="c-date">${new Date(c.createdAt || Date.now()).toLocaleDateString('pt-BR')}</span>
+      </div>
+      <div class="c-text">${escapeHtml(c.texto)}</div>
+    </div>
+  `).join('');
+}
+document.getElementById('commentsCloseBtn').addEventListener('click', closeComments);
+document.getElementById('commentsCancelBtn').addEventListener('click', closeComments);
+document.getElementById('commentsOverlay').addEventListener('click', e => { if (e.target.id === 'commentsOverlay') closeComments(); });
+document.getElementById('commentsSendBtn').addEventListener('click', async () => {
+  const nome  = document.getElementById('c_nome').value.trim();
+  const texto = document.getElementById('c_texto').value.trim();
+  if (!texto) { alert('Escreva um comentário antes de enviar. 😊'); return; }
+  if (!openCommentsFor) return;
+  const btn = document.getElementById('commentsSendBtn');
+  btn.disabled = true;
+  try {
+    const cRef = push(ref(db, `comments/${openCommentsFor}`));
+    await set(cRef, { nome: nome || 'Morador', texto, createdAt: Date.now() });
+    document.getElementById('c_nome').value = '';
+    document.getElementById('c_texto').value = '';
+    showToast('💬 Comentário publicado!');
+  } catch (e) {
+    console.error(e);
+    alert('Não foi possível publicar o comentário agora. Tente novamente em instantes.');
+  }
+  btn.disabled = false;
 });
 
 // ─── BOTTOM NAV (mobile) ────────────────────────────────────────────────────

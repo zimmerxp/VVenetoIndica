@@ -7,20 +7,20 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#f5f0e8; --dark:#1a1710; --green:#2d5a27; --green-light:#4a8c42; --green-pale:#e8f0e6;
-    --gold:#c9a84c; --gold-light:#f0d98a; --red:#b03a2e; --red-pale:#fceae8;
-    --text:#2c2a24; --text-muted:#7a7668; --border:#ddd8cc; --white:#fff;
-    --radius:12px; --shadow:0 4px 24px rgba(26,23,16,0.10);
+    --cream:#fafafa; --dark:#111113; --green:#16a34a; --green-light:#22c55e; --green-pale:#e3f7e9;
+    --gold:#b45309; --gold-light:#f59e0b; --red:#dc2626; --red-pale:#fee2e2;
+    --text:#18181b; --text-muted:#71717a; --border:#e7e7ea; --white:#fff;
+    --radius:14px; --shadow:0 8px 24px rgba(24,24,27,0.08);
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
   header{background:var(--dark);color:var(--cream);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:50;box-shadow:0 2px 20px rgba(0,0,0,.3);}
   .brand{display:flex;align-items:center;gap:12px;}
   .brand-icon{width:38px;height:38px;background:var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:19px;}
-  .brand h1{font-family:'Playfair Display',serif;font-size:1.05rem;}
+  .brand h1{font-weight:800;font-size:1.05rem;letter-spacing:-0.01em;}
   .brand span{font-size:.68rem;color:var(--gold-light);text-transform:uppercase;letter-spacing:.06em;}
   .btn{padding:9px 16px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;}
   .btn:hover{border-color:var(--green);color:var(--green-light);}
@@ -32,7 +32,7 @@
   header .btn:hover{border-color:var(--gold);color:var(--gold-light);}
 
   #loginScreen{max-width:380px;margin:64px auto;background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:32px;box-shadow:var(--shadow);}
-  #loginScreen h2{font-family:'Playfair Display',serif;margin-bottom:6px;}
+  #loginScreen h2{font-weight:800;letter-spacing:-0.01em;margin-bottom:6px;}
   #loginScreen p{color:var(--text-muted);font-size:.85rem;margin-bottom:20px;}
   .form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
   .form-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted);}
@@ -57,6 +57,11 @@
   .seed-banner p{flex:1;min-width:200px;font-size:.85rem;color:var(--text);}
   .seed-banner strong{display:block;margin-bottom:2px;}
 
+  .pending-section h2{font-size:1rem;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .pending-card{background:#fff;border:1.5px solid var(--gold-light);border-radius:12px;padding:14px 16px;}
+  .pending-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .pending-list{display:flex;flex-direction:column;gap:12px;margin-bottom:22px;}
+
   table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:1.5px solid var(--border);}
   thead{background:var(--cream);}
   th{text-align:left;padding:10px 14px;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted);}
@@ -74,7 +79,7 @@
   .modal-overlay.open{display:flex;}
   .modal{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
   .modal-header{background:var(--green);padding:18px 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;}
-  .modal-header h3{color:#fff;font-family:'Playfair Display',serif;font-size:1.05rem;}
+  .modal-header h3{color:#fff;font-weight:800;font-size:1.05rem;letter-spacing:-0.01em;}
   .modal-close{background:rgba(255,255,255,.15);border:none;border-radius:8px;color:#fff;width:30px;height:30px;cursor:pointer;font-size:1rem;}
   .modal-body{padding:22px;display:flex;flex-direction:column;gap:12px;}
   .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -133,6 +138,12 @@
     <span class="pill"><b id="pillTotal">0</b> serviços</span>
     <span class="pill"><b id="pillCats">0</b> categorias</span>
     <span class="pill"><b id="pillMoradores">0</b> de moradores</span>
+    <span class="pill"><b id="pillPending">0</b> ⏳ pendentes</span>
+  </div>
+
+  <div class="pending-section" id="pendingSection" style="display:none;">
+    <h2>⏳ Indicações pendentes de aprovação</h2>
+    <div class="pending-list" id="pendingList"></div>
   </div>
 
   <div class="toolbar">
@@ -196,6 +207,39 @@
       <button class="btn" id="cancelBtn">Cancelar</button>
       <button class="btn btn-danger" id="deleteBtn" style="display:none;">Excluir</button>
       <button class="btn btn-primary" id="saveBtn">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: MODERAÇÃO DE COMENTÁRIOS -->
+<div class="modal-overlay" id="commentsModOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="commentsModTitle">💬 Comentários</h3>
+      <button class="modal-close" id="commentsModCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="commentsModList" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="commentsModCancelBtn" style="flex:1;">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NOTIFICAR MORADOR -->
+<div class="modal-overlay" id="notifyOverlay">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <h3 id="notifyTitle">🔔 Avisar morador</h3>
+      <button class="modal-close" id="notifyCloseBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="notifyText" style="font-size:.88rem;color:var(--text-muted);"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="notifySkipBtn" style="flex:1;">Agora não</button>
+      <a class="btn btn-primary" id="notifyLinkBtn" href="#" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;">Abrir</a>
     </div>
   </div>
 </div>
@@ -317,6 +361,11 @@ const EMOJI_SETS = {
 
 let services = [];
 let editingId = null;
+let pending = {};
+let fbComments = {};
+let approvingPendingKey = null;
+let approvingPendingNotif = null;
+let commentsModOpenId = null;
 
 // ─── TOAST ─────────────────────────────────────────────────────────────────
 let toastTimer;
@@ -358,7 +407,147 @@ function startListening() {
     document.getElementById('seedBanner').style.display = services.length === 0 ? 'flex' : 'none';
     renderTable();
   });
+  onValue(ref(db, 'pending'), snap => {
+    pending = snap.val() || {};
+    renderPending();
+  });
+  onValue(ref(db, 'comments'), snap => {
+    fbComments = snap.val() || {};
+    renderTable();
+    if (commentsModOpenId !== null) renderCommentsModModal(commentsModOpenId);
+  });
 }
+
+// ─── INDICAÇÕES PENDENTES ───────────────────────────────────────────────────
+function renderPending() {
+  const keys = Object.keys(pending);
+  document.getElementById('pillPending').textContent = keys.length;
+  const section = document.getElementById('pendingSection');
+  const list = document.getElementById('pendingList');
+  if (keys.length === 0) { section.style.display = 'none'; list.innerHTML = ''; return; }
+  section.style.display = 'block';
+  const items = keys.map(k => ({ key: k, ...pending[k] })).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  list.innerHTML = items.map(p => `
+    <div class="pending-card">
+      <div class="pending-head">
+        <div><strong>${CAT_EMOJI[p.cat] || '🆕'} ${escapeHtml(p.nome || '')}</strong> <span class="muted">— ${escapeHtml(p.cat || '')}</span></div>
+        <span class="muted">${new Date(p.createdAt || Date.now()).toLocaleDateString('pt-BR')}</span>
+      </div>
+      <div class="muted" style="margin:4px 0;">📞 ${escapeHtml(p.tel || '')}${p.morador === 'Sim' ? ' · 🏘️ Morador' : ''}</div>
+      ${p.desc ? `<div style="font-size:.85rem;margin-bottom:6px;">${escapeHtml(p.desc)}</div>` : ''}
+      ${p.quem ? `<div class="muted" style="font-size:.78rem;">Indicado por: ${escapeHtml(p.quem)}</div>` : ''}
+      ${p.notif ? `<div class="muted" style="font-size:.78rem;">🔔 Avisar por ${p.notif.tipo === 'whatsapp' ? 'WhatsApp' : 'e-mail'}: ${escapeHtml(p.notif.valor)}</div>` : ''}
+      <div class="row-actions" style="margin-top:10px;">
+        <button class="btn btn-primary" data-approve="${p.key}">✅ Aprovar</button>
+        <button class="btn btn-danger" data-reject="${p.key}">✕ Rejeitar</button>
+      </div>
+    </div>
+  `).join('');
+  list.querySelectorAll('[data-approve]').forEach(b => b.addEventListener('click', () => approvePending(b.dataset.approve)));
+  list.querySelectorAll('[data-reject]').forEach(b => b.addEventListener('click', () => rejectPending(b.dataset.reject)));
+}
+
+function approvePending(key) {
+  const p = pending[key];
+  if (!p) return;
+  editingId = null;
+  approvingPendingKey = key;
+  approvingPendingNotif = p.notif || null;
+  document.getElementById('modalTitle').textContent = '✅ Aprovar indicação';
+  document.getElementById('deleteBtn').style.display = 'none';
+  document.getElementById('f_nome').value = p.nome || '';
+  document.getElementById('f_cat').value = p.cat || '';
+  document.getElementById('f_tel').value = p.tel || '';
+  document.getElementById('f_desc').value = p.desc || '';
+  document.getElementById('f_morador').value = (p.morador === 'Sim') ? 'true' : 'false';
+  document.getElementById('f_emoji').value = CAT_EMOJI[p.cat] || '';
+  fillEmojiSuggestions(p.cat || '');
+  openModal();
+}
+
+async function rejectPending(key) {
+  const p = pending[key];
+  if (!p) return;
+  if (!confirm(`Rejeitar a indicação de "${p.nome}"? Essa ação não pode ser desfeita.`)) return;
+  try {
+    await remove(ref(db, 'pending/' + key));
+    showToast('🗑️ Indicação rejeitada.');
+    if (p.notif) openNotifyModal(p.nome, p.notif, true);
+  } catch (e) {
+    alert('Erro ao rejeitar: ' + e.message);
+  }
+}
+
+// ─── AVISAR MORADOR (WhatsApp / e-mail pré-preenchidos) ─────────────────────
+function openNotifyModal(nome, notif, rejected) {
+  const msgApproved = `Boa notícia! 🎉 Sua indicação de ${nome} foi aprovada e já está no catálogo Veneto Indica: https://venetoindica.site/`;
+  const msgRejected = `Olá! Sobre sua indicação de ${nome} no Veneto Indica: não foi possível incluí-la no catálogo no momento. Obrigado por contribuir! 🙏`;
+  const msg = rejected ? msgRejected : msgApproved;
+  let link = '';
+  if (notif.tipo === 'whatsapp') {
+    const digits = (normalizePhone(notif.valor) || '').replace('+', '');
+    link = `https://wa.me/${digits}?text=${encodeURIComponent(msg)}`;
+  } else {
+    const subject = rejected ? 'Sobre sua indicação — Veneto Indica' : 'Sua indicação foi aprovada! — Veneto Indica';
+    link = `mailto:${notif.valor}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(msg)}`;
+  }
+  document.getElementById('notifyTitle').textContent = rejected ? '🔔 Avisar sobre a recusa?' : '🔔 Avisar que foi aprovado!';
+  document.getElementById('notifyText').textContent = `Clique para abrir ${notif.tipo === 'whatsapp' ? 'o WhatsApp' : 'o e-mail'} com a mensagem já pronta para ${notif.valor}.`;
+  const btn = document.getElementById('notifyLinkBtn');
+  btn.href = link;
+  btn.textContent = notif.tipo === 'whatsapp' ? '📱 Abrir WhatsApp' : '📧 Abrir e-mail';
+  document.getElementById('notifyOverlay').classList.add('open');
+}
+function closeNotify() { document.getElementById('notifyOverlay').classList.remove('open'); }
+document.getElementById('notifyCloseBtn').addEventListener('click', closeNotify);
+document.getElementById('notifySkipBtn').addEventListener('click', closeNotify);
+document.getElementById('notifyOverlay').addEventListener('click', e => { if (e.target.id === 'notifyOverlay') closeNotify(); });
+document.getElementById('notifyLinkBtn').addEventListener('click', () => setTimeout(closeNotify, 300));
+
+// ─── MODERAÇÃO DE COMENTÁRIOS ───────────────────────────────────────────────
+function openCommentsMod(id) {
+  commentsModOpenId = id;
+  renderCommentsModModal(id);
+  document.getElementById('commentsModOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCommentsMod() {
+  commentsModOpenId = null;
+  document.getElementById('commentsModOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function renderCommentsModModal(id) {
+  const s = services.find(x => x.id === id);
+  document.getElementById('commentsModTitle').textContent = `💬 Comentários — ${s ? s.name : id}`;
+  const entries = Object.entries(fbComments[id] || {}).sort((a, b) => (a[1].createdAt || 0) - (b[1].createdAt || 0));
+  const list = document.getElementById('commentsModList');
+  if (entries.length === 0) {
+    list.innerHTML = `<p class="muted" style="text-align:center;padding:20px;">Nenhum comentário ainda.</p>`;
+    return;
+  }
+  list.innerHTML = entries.map(([key, c]) => `
+    <div style="border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;">
+      <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:4px;">
+        <strong style="font-size:.82rem;">${escapeHtml(c.nome || 'Morador')}</strong>
+        <span class="muted" style="font-size:.72rem;">${new Date(c.createdAt || Date.now()).toLocaleDateString('pt-BR')}</span>
+      </div>
+      <div style="font-size:.85rem;color:var(--text);margin-bottom:8px;">${escapeHtml(c.texto)}</div>
+      <button class="btn btn-danger" data-del-comment="${key}" style="padding:5px 10px;font-size:.75rem;">🗑️ Excluir</button>
+    </div>
+  `).join('');
+  list.querySelectorAll('[data-del-comment]').forEach(b => b.addEventListener('click', async () => {
+    if (!confirm('Excluir este comentário?')) return;
+    try {
+      await remove(ref(db, `comments/${id}/${b.dataset.delComment}`));
+      showToast('🗑️ Comentário excluído.');
+    } catch (e) {
+      alert('Erro ao excluir: ' + e.message);
+    }
+  }));
+}
+document.getElementById('commentsModCloseBtn').addEventListener('click', closeCommentsMod);
+document.getElementById('commentsModCancelBtn').addEventListener('click', closeCommentsMod);
+document.getElementById('commentsModOverlay').addEventListener('click', e => { if (e.target.id === 'commentsModOverlay') closeCommentsMod(); });
 
 document.getElementById('importSeedBtn').addEventListener('click', async () => {
   if (!confirm(`Importar ${SEED_SERVICES.length} serviços para o Firebase? Isso só deve ser feito uma vez.`)) return;
@@ -414,10 +603,14 @@ function renderTable() {
       <td data-label="Categoria">${escapeHtml(s.cat)}</td>
       <td data-label="Telefone(s)">${(s.phones||[]).map(formatPhone).join('<br>')}</td>
       <td data-label="Tipo">${s.morador ? '<span class="badge-morador">Morador</span>' : '<span class="badge-externo">Externo</span>'}</td>
-      <td data-label="Ações"><div class="row-actions"><button class="btn" data-edit="${s.id}">✏️ Editar</button></div></td>
+      <td data-label="Ações"><div class="row-actions">
+        <button class="btn" data-edit="${s.id}">✏️ Editar</button>
+        <button class="btn" data-comments="${s.id}">💬${Object.keys(fbComments[s.id] || {}).length ? ' ' + Object.keys(fbComments[s.id] || {}).length : ''}</button>
+      </div></td>
     </tr>
   `).join('');
   tbody.querySelectorAll('[data-edit]').forEach(btn => btn.addEventListener('click', () => openEdit(Number(btn.dataset.edit))));
+  tbody.querySelectorAll('[data-comments]').forEach(btn => btn.addEventListener('click', () => openCommentsMod(Number(btn.dataset.comments))));
 }
 
 document.getElementById('adminSearch').addEventListener('input', renderTable);
@@ -445,6 +638,8 @@ document.getElementById('f_cat').addEventListener('input', e => fillEmojiSuggest
 
 document.getElementById('addBtn').addEventListener('click', () => {
   editingId = null;
+  approvingPendingKey = null;
+  approvingPendingNotif = null;
   document.getElementById('modalTitle').textContent = '➕ Novo serviço';
   document.getElementById('deleteBtn').style.display = 'none';
   ['f_nome','f_cat','f_tel','f_desc','f_emoji'].forEach(id => document.getElementById(id).value = '');
@@ -457,6 +652,8 @@ function openEdit(id) {
   const s = services.find(x => x.id === id);
   if (!s) return;
   editingId = id;
+  approvingPendingKey = null;
+  approvingPendingNotif = null;
   document.getElementById('modalTitle').textContent = '✏️ Editar serviço';
   document.getElementById('deleteBtn').style.display = 'inline-block';
   document.getElementById('f_nome').value = s.name || '';
@@ -490,6 +687,8 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
   if (phones.length === 0) { alert('Informe pelo menos um telefone válido.'); return; }
 
   const payload = { cat, name: nome, desc, phones, morador, emoji };
+  const pendingKeyToApprove = approvingPendingKey;
+  const pendingNotifToApprove = approvingPendingNotif;
 
   try {
     if (editingId) {
@@ -504,9 +703,17 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
       const newId = result.snapshot.val() - 1; // o id que acabamos de reservar
       payload.createdAt = Date.now();
       await set(ref(db, `services/${newId}`), payload);
-      showToast('✅ Serviço adicionado!');
+      showToast(pendingKeyToApprove ? '✅ Indicação aprovada e publicada!' : '✅ Serviço adicionado!');
+      if (pendingKeyToApprove) {
+        await remove(ref(db, 'pending/' + pendingKeyToApprove));
+        approvingPendingKey = null;
+        approvingPendingNotif = null;
+      }
     }
     closeModal();
+    if (pendingKeyToApprove && pendingNotifToApprove) {
+      openNotifyModal(nome, pendingNotifToApprove, false);
+    }
   } catch (e) {
     alert('Erro ao salvar: ' + e.message + '\n\nConfira as regras de segurança do Firebase (o nó "services" deve permitir escrita para usuários autenticados).');
   }
