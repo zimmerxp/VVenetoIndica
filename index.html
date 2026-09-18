@@ -23,7 +23,8 @@
 
   <!-- PWA / mobile app-like -->
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="icon" href="icons/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -152,12 +153,12 @@
     .logo-block { display: flex; align-items: center; gap: 12px; min-width: 0; }
     .logo-icon {
       width: 40px; height: 40px;
-      background: var(--accent);
       border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
       flex-shrink: 0;
+      overflow: hidden;
     }
+    .logo-icon svg { width: 100%; height: 100%; display: block; }
     .logo-text h1 {
       font-size: 1.02rem;
       font-weight: 800;
@@ -272,6 +273,14 @@
     .fcard .fc-avatar { width: 36px; height: 36px; border-radius: 10px; display:flex; align-items:center; justify-content:center; font-size:1.05rem; flex-shrink:0; }
     .fcard .fc-name { font-size: 0.85rem; font-weight: 700; color: var(--text); line-height:1.25; margin-bottom:3px; }
     .fcard .fc-meta { font-size: 0.72rem; color: var(--text-muted); display:flex; align-items:center; gap:4px; }
+    @media (max-width: 640px) {
+      .featured-title { font-size: 0.7rem; margin-bottom: 8px; }
+      .featured-row { gap: 8px; }
+      .fcard { width: 156px; padding: 10px; gap: 8px; }
+      .fcard .fc-avatar { width: 28px; height: 28px; font-size: 0.85rem; border-radius: 8px; }
+      .fcard .fc-name { font-size: 0.76rem; margin-bottom: 2px; }
+      .fcard .fc-meta { font-size: 0.64rem; }
+    }
 
     /* ── FILTER BAR ── */
     .filter-bar {
@@ -298,6 +307,65 @@
       .filter-bar { overflow: visible; }
       .filter-inner { flex-wrap: wrap; white-space: normal; }
     }
+    .filter-mobile-toggle {
+      display: none;
+      width: 100%;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      margin: 10px 0;
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: left;
+    }
+    .filter-mobile-toggle .hamb-icon { font-size: 1.05rem; line-height: 1; }
+    .filter-mobile-toggle .fmt-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .filter-mobile-toggle .fmt-chev { opacity: 0.5; font-size: 0.9rem; }
+    @media (max-width: 640px) {
+      .filter-bar { position: static; }
+      .filter-inner { display: none; }
+      .filter-mobile-toggle { display: flex; }
+    }
+    .cat-sheet-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(15,15,15,0.5);
+      z-index: 400;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .cat-sheet-overlay.open { display: flex; }
+    .cat-sheet {
+      background: var(--surface);
+      width: 100%;
+      max-width: 560px;
+      max-height: 78vh;
+      border-radius: 20px 20px 0 0;
+      overflow-y: auto;
+      animation: catSheetUp 0.2s ease;
+      padding-bottom: 12px;
+    }
+    @keyframes catSheetUp { from { transform: translateY(24px); opacity: 0.5; } to { transform: translateY(0); opacity: 1; } }
+    .cat-sheet-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 18px 10px;
+      position: sticky; top: 0;
+      background: var(--surface);
+    }
+    .cat-sheet-header h3 { font-size: 1rem; font-weight: 800; color: var(--text); letter-spacing: -0.01em; }
+    .cat-sheet-close {
+      width: 30px; height: 30px; border-radius: 9px; border: none;
+      background: var(--surface-2); color: var(--text); font-size: 1rem; cursor: pointer;
+    }
+    .cat-sheet-list { display: flex; flex-direction: column; gap: 6px; padding: 4px 14px 16px; }
+    .cat-sheet-list .filter-btn { width: 100%; justify-content: flex-start; border-radius: 12px; padding: 12px 14px; font-size: 0.88rem; }
+    .cat-sheet-list .filter-divider { width: 100%; height: 1px; margin: 8px 0; }
+    .cat-sheet-list .filter-toggle { width: 100%; justify-content: flex-start; border-radius: 12px; padding: 12px 14px; font-size: 0.88rem; }
     .filter-btn {
       padding: 8px 16px;
       border-radius: 30px;
@@ -787,7 +855,14 @@
 <header>
   <div class="header-inner">
     <div class="logo-block">
-      <div class="logo-icon">🏡</div>
+      <div class="logo-icon">
+        <svg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo Veneto Indica">
+          <rect x="4" y="4" width="132" height="132" rx="32" fill="#f0fdf4"/>
+          <path d="M70 22 C46 22 28 40 28 63 C28 92 70 118 70 118 C70 118 112 92 112 63 C112 40 94 22 70 22 Z" fill="#16a34a"/>
+          <path d="M70 46 L94 66 V92 A4 4 0 0 1 90 96 H50 A4 4 0 0 1 46 92 V66 Z" fill="#ffffff"/>
+          <rect x="62" y="78" width="16" height="18" rx="2" fill="#16a34a"/>
+        </svg>
+      </div>
       <div class="logo-text">
         <h1>Villa Veneto</h1>
         <span>Catálogo de Serviços</span>
@@ -834,6 +909,22 @@
 <div class="filter-bar">
   <div class="filter-inner" id="filterBar">
     <button class="filter-btn active" data-cat="all">⚡ Todos</button>
+  </div>
+  <button class="filter-mobile-toggle" id="filterMobileBtn" aria-label="Abrir categorias">
+    <span class="hamb-icon">☰</span>
+    <span class="fmt-label" id="filterMobileLabel">Todos</span>
+    <span class="fmt-chev">▾</span>
+  </button>
+</div>
+
+<!-- MOBILE CATEGORY SHEET -->
+<div class="cat-sheet-overlay" id="catSheetOverlay">
+  <div class="cat-sheet">
+    <div class="cat-sheet-header">
+      <h3>Categorias</h3>
+      <button class="cat-sheet-close" id="catSheetCloseBtn">✕</button>
+    </div>
+    <div class="cat-sheet-list" id="catSheetList"></div>
   </div>
 </div>
 
@@ -949,7 +1040,7 @@
     <div class="modal-footer">
       <button class="btn-cancel" id="modalCancelBtn">Cancelar</button>
       <button class="btn-send" id="enviarBtn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
         Enviar indicação
       </button>
     </div>
@@ -1111,7 +1202,6 @@ function escapeHtml(str) {
 
 // ─── FILTER BAR (categorias dinâmicas, calculadas a partir dos dados) ──────
 function buildFilterBar() {
-  const bar = document.getElementById('filterBar');
   const activeBefore = currentCat;
   const catsPresent = CAT_ORDER.filter(c => services.some(s => s.cat === c));
   const extra = [...new Set(services.map(s => s.cat))].filter(c => !CAT_ORDER.includes(c));
@@ -1125,17 +1215,41 @@ function buildFilterBar() {
     html += `<button class="filter-btn ${activeBefore===cat?'active':''}" data-cat="${escapeHtml(cat)}"><span class="cat-emoji">${emoji}</span> ${escapeHtml(cat)} <span class="filter-count">${n}</span></button>`;
   });
   html += `<div class="filter-divider"></div>
-    <button class="filter-toggle ${somenteMoradores?'active':''}" id="moradorToggle">👋 Só Moradores</button>`;
-  bar.innerHTML = html;
+    <button class="filter-toggle ${somenteMoradores?'active':''}" data-morador-toggle="1">👋 Só Moradores</button>`;
 
+  document.getElementById('filterBar').innerHTML = html;
+  document.getElementById('catSheetList').innerHTML = html;
   document.getElementById('catCount').textContent = allCats.length;
 
-  bar.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => { currentCat = btn.dataset.cat; buildFilterBar(); renderCards(); window.scrollTo({top:0,behavior:'smooth'}); });
+  const label = activeBefore === 'all' ? 'Todos' : activeBefore;
+  document.getElementById('filterMobileLabel').textContent = label + (somenteMoradores ? ' · Moradores' : '');
+
+  document.querySelectorAll('#filterBar .filter-btn, #catSheetList .filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentCat = btn.dataset.cat;
+      buildFilterBar();
+      renderCards();
+      closeCatSheet();
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
   });
-  const mt = document.getElementById('moradorToggle');
-  if (mt) mt.addEventListener('click', () => { somenteMoradores = !somenteMoradores; buildFilterBar(); renderCards(); });
+  document.querySelectorAll('[data-morador-toggle]').forEach(mt => {
+    mt.addEventListener('click', () => { somenteMoradores = !somenteMoradores; buildFilterBar(); renderCards(); });
+  });
 }
+
+// ─── MOBILE CATEGORY SHEET ("menu sanduíche") ───────────────────────────────
+function openCatSheet() {
+  document.getElementById('catSheetOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCatSheet() {
+  document.getElementById('catSheetOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('filterMobileBtn').addEventListener('click', openCatSheet);
+document.getElementById('catSheetCloseBtn').addEventListener('click', closeCatSheet);
+document.getElementById('catSheetOverlay').addEventListener('click', e => { if (e.target.id === 'catSheetOverlay') closeCatSheet(); });
 
 // ─── DESTAQUES (top avaliados, só na visão geral padrão) ───────────────────
 function renderFeatured() {
